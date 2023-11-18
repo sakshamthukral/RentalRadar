@@ -1,0 +1,86 @@
+package cc.InvertedIndex;
+
+import java.util.*;
+
+public class InverseIndexing {
+    private final Set<String> stopWords;
+    private TernaryNode root;
+
+    public InverseIndexing() {
+        root = null;
+        stopWords = new HashSet<>();
+    }
+
+    public void addDocument(String parentPath, String documentName) {
+        FileReader
+                .readFile(parentPath, documentName)
+                .forEach(word -> {
+                    if (!stopWords.contains(word)) // Check if the word is a stop word
+                        root = insert(root, word.toCharArray(), 0, documentName);
+                });
+    }
+
+    private TernaryNode insert(TernaryNode node, char[] word, int index, String documentName) {
+        char c = word[index];
+
+        if (node == null) {
+            node = new TernaryNode(c);
+        }
+
+        if (c < node.character) {
+            node.left = insert(node.left, word, index, documentName);
+        } else if (c > node.character) {
+            node.right = insert(node.right, word, index, documentName);
+        } else {
+            if (index < word.length - 1) {
+                node.mid = insert(node.mid, word, index + 1, documentName);
+            } else {
+                node.documents.add(documentName);
+            }
+        }
+
+        return node;
+    }
+
+    public Set<String> search(String query) {
+        String[] queryWords = query.split("\\s+");
+        Set<String> result = new HashSet<>();
+
+        for (String queryWord : queryWords) {
+            queryWord = queryWord.toLowerCase();
+            if (root != null) {
+                TernaryNode node = search(root, queryWord.toCharArray(), 0);
+                if (node != null) {
+                    result.addAll(node.documents);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private TernaryNode search(TernaryNode node, char[] word, int index) {
+        if (node == null) {
+            return null;
+        }
+
+        char c = word[index];
+
+        if (c < node.character) {
+            return search(node.left, word, index);
+        } else if (c > node.character) {
+            return search(node.right, word, index);
+        } else {
+            if (index < word.length - 1) {
+                return search(node.mid, word, index + 1);
+            } else {
+                return node;
+            }
+        }
+    }
+
+    // Set to store stop words
+    public void addStopWords(String... words) {
+        stopWords.addAll(Arrays.asList(words));
+    }
+}
