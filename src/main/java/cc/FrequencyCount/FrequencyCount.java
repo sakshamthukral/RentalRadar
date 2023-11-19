@@ -3,8 +3,6 @@ package cc.FrequencyCount;
 import cc.InvertedIndex.Config;
 import cc.InvertedIndex.FileReader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -107,7 +105,7 @@ public class FrequencyCount {
 //                }
 
 
-                List<String> fileContent = FileReader.readFile(Config.PARTENT_DIR, Config.COMMON_PATH + fileName);
+                List<String> fileContent = FileReader.readFile(Config.PARENT_DIR, Config.COMMON_PATH + fileName);
 
                 System.out.print("Enter the word to count its frequency: ");
                 String targetWord = scanner.nextLine();

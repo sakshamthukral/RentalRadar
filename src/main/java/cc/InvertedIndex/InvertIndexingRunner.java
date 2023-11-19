@@ -20,13 +20,13 @@ public class InvertIndexingRunner {
 
     private static void addStopWordsTask() {
         FileReader
-                .readFile(Config.PARTENT_DIR, Config.FILE_STOPWORDS)
+                .readFile(Config.PARENT_DIR, Config.FILE_STOPWORDS)
                 .forEach(indexer::addStopWords);
     }
 
     // may need to work on removing symbols
     private static void addWordsTask() {
-        String parentPath = Config.PARTENT_DIR.concat(Config.COMMON_PATH);
+        String parentPath = Config.PARENT_DIR.concat(Config.COMMON_PATH);
 
         String[] fileNames = listAllFiles(parentPath);
 
