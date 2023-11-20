@@ -6,10 +6,13 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import cc.Autocomplete.Trie;
+
 import java.io.*;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import org.apache.commons.io.FileUtils;
@@ -86,8 +89,72 @@ public class Main {
         } catch(Exception e){
             System.out.println(e);
         }
+                String[] cities = { "Toronto", "Montreal", "Calgary", "Ottawa", "Edmonton", "Winnipeg",
+                "Vancouver", "Brampton", "Hamilton", "Surrey", "Quebec", "Halifax", "Laval",
+                "London", "Markham", "Vaughan", "Gatineau", "Saskatoon", "Kitchener", "Longueuil",
+                "Burnaby", "Windsor", "Regina", "Oakville", "Richmond", "Richmond", "Burlington",
+                "Oshawa", "Sherbrooke", "Sudbury", "Abbotsford", "Coquitlam", "Barrie", "Saguenay",
+                "Kelowna", "Guelph", "Whitby", "Cambridge", "Catharines", "Milton", "Langley", "Kingston",
+                "Ajax", "Waterloo", "Terrebonne", "Saanich", "Delta", "Brantford", "Clarington", "Nanaimo",
+                "Strathcona", "Pickering", "Lethbridge", "Kamloops", "Richelieu", "Niagara", "Cape Breton",
+                "Chilliwack", "Victoria", "Brossard", "Newmarket", "Repentigny", "Peterborough",
+                "Moncton", "Drummondville", "Caledon", "Airdrie", "Sarnia", "Granby", "Fredericton",
+                "Aurora", "Mirabel", "Blainville", "Welland", "Belleville" };
+        Trie trie = new Trie();
+        // Added all major cities to the trie.
+
+        for (String city : cities) {
+            trie.insert(city);
+        }
+        trie.loadSearchFrequenciesFromFile("D:\\ACC\\compute-champions\\src\\main\\java\\cc\\SearchFrequency\\searchFrequencies.txt");
+
         System.out.print("Enter the city where you are looking for rentals: ");
         String city = sc.nextLine();
+                    // Check if the input contains only alphabetic characters
+                if (!city.matches("^[a-zA-Z]+$")) {
+                    System.out.println("Invalid input.1 Please enter a valid city name.");
+                }else{
+                List<String> suggestions = trie.autoComplete(city);
+                System.out.println("Autocomplete suggestions:");
+                String suggestion="";
+                for (int i = 0; i < suggestions.size(); i++) {
+                    suggestion = suggestions.get(i);
+                    System.out.println((i + 1) + ". " + suggestion);
+                }
+                 int selectedOption=0;
+                if (suggestions.size()>1) {
+                    System.out.print("Enter the number for the suggestion you want to select: ");
+                   
+                    try {
+                        selectedOption = sc.nextInt();
+                        sc.nextLine(); // Consume the newline character1
+                    } catch (InputMismatchException e) {
+                        System.out.println("Invalid input. Try again!");
+                        sc.nextLine(); // Consume the invalid input
+    
+                    }
+
+                            if (selectedOption > 0 && selectedOption <= suggestions.size()) {
+                                suggestion = suggestions.get(selectedOption - 1);
+                                System.out.println("City Name " + suggestion + " is selected");
+                                trie.displaySearchFrequency(suggestion); // Display search frequency for the selected city
+                                trie.incrementSearchFrequency(suggestion); // Increment the search frequency for the selected city
+                            } else {
+                                System.out.println("Invalid selection. Try Again!");
+                            }
+                        } else 
+                        {
+                        	for (int i = 0; i < suggestions.size(); i++) 
+       			    	   {
+       					        suggestion = suggestions.get(i);
+       					        System.out.println("City Name "+ suggestion+ " is selected");
+       					     trie.displaySearchFrequency(suggestion);
+       					     trie.incrementSearchFrequency(suggestion);
+       					   }
+                        }
+                    
+
+
         System.out.print("Enter the number of pages(<5 in order to prevent longer running times) you want to scrape: ");
         int numPages = sc.nextInt();
 
@@ -105,16 +172,18 @@ public class Main {
         createFolderIfNotExists(HTMLFolderPath);
         createFolderIfNotExists(txtFolderPath);
         if(websiteCode==1){
-            crawlLiv.driveCrawling(driver, wait, numPages, city);
+            crawlLiv.driveCrawling(driver, wait, numPages, suggestion);
             parseLiv.processHtmlFiles(HTMLFolderPath, txtFolderPath);
         }else if(websiteCode==2){
-            crawlRental.driveCrawling(driver, wait, numPages, city);
+            crawlRental.driveCrawling(driver, wait, numPages, suggestion);
             parseRental.processHtmlFiles(HTMLFolderPath, txtFolderPath);
         } else if (websiteCode==3) {
-            crawlRentSeeker.driveCrawling(driver, wait, numPages, city);
+            crawlRentSeeker.driveCrawling(driver, wait, numPages, suggestion);
             parseRentSeeker.processHtmlFiles(HTMLFolderPath, txtFolderPath);
         }
         saveLastRunTime(lastRunTimeFilePath);
+       }// else of  if (!city.matches("^[a-zA-Z]+$")) closes here
+       trie.saveSearchFrequenciesToFile("D:\\ACC\\compute-champions\\src\\main\\java\\cc\\SearchFrequency\\searchFrequencies.txt");
     }
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
@@ -155,6 +224,6 @@ public class Main {
                 System.out.println("Not a valid option!");
             }
         }
-
+        
     }
 }
