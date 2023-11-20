@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class parseRental {
-    public static final String txtFolderPath = "E:/Semester-1/ACC/final_project/compute_champions/parsed_rental.ca";
     public static void main(String[] args){
 //        String htmlFolderPath = "E:/Semester-1/ACC/final_project/compute_champions/pageSources";
 //        String txtFolderPath = "E:/Semester-1/ACC/final_project/compute_champions/htmlParsedPages";

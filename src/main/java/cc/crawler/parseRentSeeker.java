@@ -9,7 +9,6 @@ import java.io.IOException;
 
 public class parseRentSeeker {
 
-    public static final String txtFolderPath = "E:/Semester-1/ACC/final_project/compute_champions/parsed_rentSeeker.ca";
     public static void main(String[] args){
 //        String htmlFolderPath = "E:/Semester-1/ACC/final_project/compute_champions/pageSources";
 //        String txtFolderPath = "E:/Semester-1/ACC/final_project/compute_champions/htmlParsedPages";

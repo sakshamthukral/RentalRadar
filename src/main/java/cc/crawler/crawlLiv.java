@@ -1,5 +1,6 @@
 package cc.crawler;
 
+import cc.utils.config;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -13,7 +14,7 @@ import java.util.*;
 
 public class crawlLiv {
     public static final String WEBSITE="https://liv.rent/";
-    public static final String HTMLFolderPath="crawled_liv.rent";
+//    public static final String HTMLFolderPath="crawled_liv.rent";
 //    private static void createFolder(){
 //        File folder = new File(HTMLFolderPath);
 //        if (!folder.exists()) {
@@ -67,7 +68,7 @@ public class crawlLiv {
                 String htmlContent = driver.getPageSource();
                 threadWait(5000);
 
-                String fileName = HTMLFolderPath +"/page_"+page+"_listing_" + i + ".html";
+                String fileName = config.HTMLFolderPathLiv +"/page_"+page+"_listing_" + i + ".html";
                 try (FileWriter fileWriter = new FileWriter(fileName)) {
                     fileWriter.write(htmlContent);
                     System.out.println("HTML content of " + link + " saved to " + fileName);
