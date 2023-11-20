@@ -17,10 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import cc.utils.config;
 
 public class crawlRentSeeker {
     public static final String WEBSITE="https://www.rentseeker.ca";
-    public static final String HTMLFolderPath="crawled_rentSeeker.ca";
+//    public static final String HTMLFolderPath=config.HTMLFolderPathRentSeeker;
     private static void threadWait(int millis){
         try {
             Thread.sleep(millis);
@@ -32,7 +33,7 @@ public class crawlRentSeeker {
     public static void driveCrawling(WebDriver driver, WebDriverWait wait, int numPages, String inputKeyword){
         driver.get(WEBSITE);
         driver.manage().window().maximize();
-        Main.createFolderIfNotExists(HTMLFolderPath);
+        Main.createFolderIfNotExists(config.HTMLFolderPathRentSeeker);
 
         switch (inputKeyword) {
             case "Toronto", "toronto" ->
@@ -62,7 +63,7 @@ public class crawlRentSeeker {
                 String htmlContent = driver.getPageSource();
                 threadWait(8000);
 
-                String fileName = HTMLFolderPath +"/page_"+page+"_listing_" + i + ".html";
+                String fileName = config.HTMLFolderPathRentSeeker +"/page_"+page+"_listing_" + i + ".html";
                 try (FileWriter fileWriter = new FileWriter(fileName)) {
                     fileWriter.write(htmlContent);
                     System.out.println("HTML content of " + link + " saved to " + fileName);

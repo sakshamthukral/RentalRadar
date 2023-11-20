@@ -16,9 +16,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import cc.main.*;
+import cc.utils.config;
 public class crawlRental {
     public static final String WEBSITE="https://rentals.ca";
-    public static final String HTMLFolderPath="crawled_rental.ca";
+//    public static final String HTMLFolderPath=config.HTMLFolderPathRental;
     private static void threadWait(int millis){
         try {
             Thread.sleep(millis);
@@ -30,7 +31,7 @@ public class crawlRental {
     public static void driveCrawling(WebDriver driver, WebDriverWait wait, int numPages, String inputKeyword){
         driver.get(WEBSITE);
         driver.manage().window().maximize();
-        Main.createFolderIfNotExists(HTMLFolderPath);
+        Main.createFolderIfNotExists(config.HTMLFolderPathRental);
 
         switch (inputKeyword) {
             case "Toronto", "toronto" ->
@@ -60,7 +61,7 @@ public class crawlRental {
                 String htmlContent = driver.getPageSource();
                 threadWait(5000);
 
-                String fileName = HTMLFolderPath +"/page_"+page+"_listing_" + i + ".html";
+                String fileName = config.HTMLFolderPathRental +"/page_"+page+"_listing_" + i + ".html";
                 try (FileWriter fileWriter = new FileWriter(fileName)) {
                     fileWriter.write(htmlContent);
                     System.out.println("HTML content of " + link + " saved to " + fileName);
