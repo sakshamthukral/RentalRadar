@@ -151,7 +151,7 @@ public class FrequencyCount {
 
     public static void main (String[] args) {
         Scanner scanner = new Scanner(System.in);
-        List<String> stopWOrdsList = Arrays.asList("is", "the", "and", "in", "to", "of", "a", "for", "with", "was", "i", "as", "at", "it", "its", "on");
+        List<String> stopWOrdsList = Arrays.asList("is", "the", "and", "in", "to", "of", "a", "for", "with", "was", "i", "as", "at", "it", "its", "on", "or", "that", "are");
 
         try {
             while (true) {
