@@ -149,8 +149,10 @@ public class Main {
                 }
             } else if (webOption == 2) {
                 System.out.println("Initiated inverted indexing");
-            } else{
+            } else if (webOption == 3){
                 break;
+            } else {
+                System.out.println("Not a valid option!");
             }
         }
 
