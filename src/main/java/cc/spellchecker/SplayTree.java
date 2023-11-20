@@ -3,15 +3,7 @@ package cc.spellchecker;
 import java.util.ArrayList;
 import java.util.List;
 
-/*class Node {
-    String key;
-    Node left, right;
 
-    public Node(String item) {
-        key = item;
-        left = right = null;
-    }
-}*/
 public class SplayTree {
     Node root;
 
@@ -134,12 +126,56 @@ public class SplayTree {
         }
 
         // If the Distance between the node's key and word is below the threshold, add it to suggestions
-        if (EditDistanceHelper.calulateEditDistance(node.key, word) <= MAX_DISTANCE) {
+        if (calulateEditDistance(node.key, word) <= MAX_DISTANCE) {
             words.add(node.key);
         }
 
         // Recur on the left and right subtree
         findResemblingWordsRecursive(node.left, word, words);
         findResemblingWordsRecursive(node.right, word, words);
+    }
+
+    // method to calculate edit distance
+    public int calulateEditDistance(String x, String y) {
+        int m = x.length();
+        int n = y.length();
+
+        int[][] dp = new int[m + 1][n + 1];
+
+        //length of X
+        // correct version from slide
+        for (int i = 1; i <= m; i++) {
+            dp[i][0] = i;
+        }
+//        System.out.println(dp);
+
+        //length of Y
+        for (int j = 1; j <= n; j++) {
+            dp[0][j] = j;
+        }
+//        System.out.println(dp);
+
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                dp[i][j] = findMin(
+                        dp[i - 1][j] + 1,
+                        dp[i][j - 1] + 1,
+                        dp[i - 1][j - 1] + 1 - delta(x.charAt(i - 1), x.charAt(i - 1))
+                );
+            }
+        }
+
+        return dp[m][n];
+    }
+
+    // what is the delta of replacing Xi with Yj
+    private int delta(char x, char y) {
+        return x == y ? 1 : 0;
+    }
+
+    // Method to find the minimum of three numbers
+    public int findMin(int a, int b, int c) {
+        return Math.min(Math.min(a, b), c);
     }
 }
