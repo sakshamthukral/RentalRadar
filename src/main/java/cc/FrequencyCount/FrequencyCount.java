@@ -1,16 +1,19 @@
 package cc.FrequencyCount;
 
 import cc.InvertedIndex.Config;
-import cc.InvertedIndex.FileReader;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class FrequencyCount {
     public static final double SIMILARITY_THRESHOLD = 0.5;
-    public static final int MAX_SIMILAR_WORDS_COUNT = 10;
+    public static final int MAX_SIMILAR_WORDS_COUNT = 5;
 
-    private static void countFrequency(List<String> fileContent, String targetWord) {
+    private static FrequentWord countFrequency(File file, String targetWord) {
         // Define a pattern to split the file content based on punctuations, spaces and tabs
         Pattern splitPattern = Pattern.compile("[\\s\\p{Punct}]+");
 
@@ -18,39 +21,34 @@ public class FrequencyCount {
 
         int count = 0;
 
-        for (String line : fileContent) {
-            String[] words = splitPattern.split(line);
+        try {
+            if (file.exists()) {
+                try (BufferedReader bufferReader = new BufferedReader(new FileReader(file))) {
+                    String currentLine;
+                    while ((currentLine = bufferReader.readLine()) != null) {
+                        // Convert the entire line to lower case for accurate frequency count
+                        String lowerCaseLine = currentLine.toLowerCase();
+                        String[] words = splitPattern.split(lowerCaseLine);
 
-            for (String word : words) {
-                getUpdatedSimilarWordsList(similarWords, word.toLowerCase(), targetWord);
-                if (word.equalsIgnoreCase(targetWord)) {
-                    count++;
+                        for (String word : words) {
+                            word = word.trim();
+                            if (!word.isEmpty()) {
+                                getUpdatedSimilarWordsList(similarWords, word, targetWord);
+                                if (word.equalsIgnoreCase(targetWord)) {
+                                    count++;
+                                }
+                            }
+                        }
+                    }
                 }
             }
-        }
-
-        System.out.println("Frequency Count for " + targetWord + " : " + count);
-        System.out.println("==========" );
-        System.out.println("Frequency Count for similar words" );
-
-        if (similarWords.isEmpty()) {
-            System.out.println("No similar words found");
-            return;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         similarWords.sort((sw1, sw2) -> Double.compare(sw2.similarity, sw1.similarity));
 
-        int similarWordsCount = 0;
-
-        for (SimilarWord sw : similarWords) {
-            if (similarWordsCount >= MAX_SIMILAR_WORDS_COUNT) {
-                break;
-            }
-            System.out.println(sw.word + " : " + sw.count);
-            similarWordsCount++;
-        }
-
-        return;
+        return new FrequentWord(count, similarWords);
     }
 
     private static void getUpdatedSimilarWordsList (List<SimilarWord> similarWords, String currentWord, String targetWOrd) {
@@ -83,71 +81,152 @@ public class FrequencyCount {
 
     }
 
+    private static Map<String, Integer> getWordFrequencyMap (File file, List<String> stopWordsList) {
+        // Create a HashMap to store word frequencies
+        Map<String, Integer> hMap = new HashMap<>();
+        // Define a pattern to split the file content based on punctuations, spaces and tabs
+        Pattern splitPattern = Pattern.compile("[\\s\\p{Punct}]+");
+
+        // Check if files in the file exist or not
+        if (file.exists()) {
+            try (BufferedReader bufferReader = new BufferedReader(new FileReader(file))) {
+                String currentLine;
+                while ((currentLine = bufferReader.readLine()) != null) {
+                    // Convert the entire line to lower case for accurate frequency count
+                    String lowerCaseLine = currentLine.toLowerCase();
+                    // Split the line into words
+                    String[] words = splitPattern.split(lowerCaseLine);
+                    // Update word frequencies in the HashMap
+                    for (String word : words) {
+                        word = word.trim();
+                        if (!word.isEmpty() && !stopWordsList.contains(word)) {
+                            // If the word already exists then increment its value by 1, if not then add 1 to the default value which is set to 0
+                            hMap.put(word, hMap.getOrDefault(word, 0) + 1);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return hMap;
+    }
+
+    private static List<Map.Entry<String, Integer>> getWordFrequencySortedList(File file, List<String> stopWordsList) {
+
+        Map<String, Integer> hMap = getWordFrequencyMap(file, stopWordsList);
+
+        // Pass the hash map to ArrayList to convert the set of entries to a list of entries so that it can sorted later
+        List<Map.Entry<String, Integer>> sortedFrequencyList = new ArrayList<>(hMap.entrySet());
+
+        // Sort the array based on Value (frequency count) of each key value pair
+        sortedFrequencyList.sort((first, second) -> second.getValue().compareTo(first.getValue()));
+
+        return sortedFrequencyList;
+    }
+
+    private static List<Map.Entry<String, Integer>> getKMostFrequentWords(File file, List<String> stopWordsList, int k) {
+
+        List<Map.Entry<String, Integer>> sortedFrequencyList = getWordFrequencySortedList(file, stopWordsList);
+
+        List<Map.Entry<String, Integer>> kMostFrequentWOrdsList = new ArrayList<>();
+
+        // Iterate over the sortedList to get the first n key value pairs (highest frequency)
+        for (int n = 0; n < k && n < sortedFrequencyList.size(); n++) {
+            kMostFrequentWOrdsList.add(sortedFrequencyList.get(n));
+        }
+
+        return  kMostFrequentWOrdsList;
+    }
+
+    private static void printWordFrequencies (Map<String, Integer> hMap) {
+        // Print word frequencies to the console
+        System.out.println("Word\t:\tFrequency");
+        for (Map.Entry<String, Integer> entry : hMap.entrySet()) {
+            System.out.println(entry.getKey() + "\t:\t" + entry.getValue());
+        }
+    }
+
     public static void main (String[] args) {
         Scanner scanner = new Scanner(System.in);
         List<String> stopWOrdsList = Arrays.asList("is", "the", "and", "in", "to", "of", "a", "for", "with", "was", "i", "as", "at", "it", "its", "on");
 
         try {
             while (true) {
+                System.out.println("\nSelect one of the following options:\n\t1. Get count for a specific word.\n\t2. Get count of all the words.\n\t3. Get count of the k most frequent words.\n\t0. Exit");
+                System.out.print("Enter option number: ");
+                int selectedOption = scanner.nextInt();
+
+                // Consume the newline character
+                scanner.nextLine();
+
+                if (selectedOption == 0) {
+                    System.out.println("Exiting");
+                    break;
+                }
+
                 System.out.print("\nEnter the filename: ");
                 String fileName = scanner.nextLine();
 
-//                System.out.println("Select one of the following options:\n\t1. Get count for a specific word.\n\t2. Get count of all the words.\n\t3. Get count of the k most frequent words.\n\t0. Exit");
-//                System.out.print("Enter option number: ");
-//                int selectedOption = scanner.nextInt();
-//
-//                // Consume the newline character
-//                scanner.nextLine();
-//
-//                if (selectedOption == 0) {
-//                    System.out.println("Exiting");
-//                    break;
-//                }
+                File file = new File(Config.PARENT_DIR, Config.COMMON_PATH + fileName);
 
+                if (selectedOption == 1) {
+                    System.out.print("Enter the word to count its frequency: ");
+                    String targetWord = scanner.nextLine();
 
-                List<String> fileContent = FileReader.readFile(Config.PARENT_DIR, Config.COMMON_PATH + fileName);
+                    FrequentWord wordFrequency = countFrequency(file, targetWord);
+                    System.out.println("Frequency Count for " + targetWord + " : " + wordFrequency.count);
+                    System.out.println("==========" );
+                    System.out.println("Frequency Count for similar words" );
 
-                System.out.print("Enter the word to count its frequency: ");
-                String targetWord = scanner.nextLine();
+                    if (wordFrequency.similarWords.isEmpty()) {
+                        System.out.println("No similar words found");
+                        return;
+                    }
 
-                countFrequency(fileContent, targetWord);
-                System.out.println("===========================\n");
+                    int similarWordsCount = 0;
+                    for (SimilarWord sw : wordFrequency.similarWords) {
+                        if (similarWordsCount >= MAX_SIMILAR_WORDS_COUNT) {
+                            break;
+                        }
+                        System.out.println(sw.word + " : " + sw.count);
+                        similarWordsCount++;
+                    }
+                } else if ( selectedOption == 2 | selectedOption == 3) {
 
-//                if (selectedOption == 1) {
-//                    System.out.print("Enter the word to count its frequency: ");
-//                    String targetWord = scanner.nextLine();
-//
-//                    countFrequency(fileContent, targetWord);
-//                } else if ( selectedOption == 2 | selectedOption == 3) {
-//
-//                    if (selectedOption == 2) {
-//                        PriorityQueue<WordFrequency> allWordFrequencies = getMinHeap(filePath, -1, stopWOrdsList);
-//
-//                        System.out.println("Printing Frequency Count of all the words in " + fileName);
-//
-//                        for (WordFrequency wf : allWordFrequencies) {
-//                            System.out.println("\t" + wf.word + " : " + wf.frequency);
-//                        }
-//                        System.out.println("===========================\n");
-//                    } else {
-//                        System.out.print("Enter the number of top frequent words: ");
-//                        int topKWords = scanner.nextInt();
-//
-//                        // Consume the newline character
-//                        scanner.nextLine();
-//
-//                        PriorityQueue<WordFrequency> topKFrequentWords =  getMinHeap(filePath, topKWords, stopWOrdsList);
-//                        while (!topKFrequentWords.isEmpty()) {
-//                            WordFrequency wordFrequency = topKFrequentWords.poll();
-//                            System.out.println("\t" + wordFrequency.word + ": " + wordFrequency.frequency);
-//                        }
-//                        System.out.println("===========================\n");
-//                    }
-//                }
-//
-//                else {
-//                    System.out.println("Please enter a valid option");
-//                }
+                    if (selectedOption == 2) {
+                        Map<String, Integer> allWordFrequencies = getWordFrequencyMap(file, stopWOrdsList);
+
+                        System.out.println("Printing Frequency Count of all the words in " + fileName);
+                        printWordFrequencies(allWordFrequencies);
+
+                        System.out.println("===========================\n");
+                    } else {
+                        System.out.print("Enter the number of top frequent words: ");
+                        int topKWords = scanner.nextInt();
+
+                        // Consume the newline character
+                        scanner.nextLine();
+
+                        List<Map.Entry<String, Integer>> kFrequentWords = getKMostFrequentWords(file, stopWOrdsList, topKWords);
+
+                        System.out.println("\nTop " + topKWords + " Most Frequent Words:");
+
+                        System.out.println("Word\t:\tFrequency");
+                        // Iterate over the sortedList to print key value pairs
+                        for (Map.Entry<String, Integer> currentWord : kFrequentWords) {
+                            System.out.println(currentWord.getKey() + "\t:\t" + currentWord.getValue());
+                        }
+
+                        System.out.println("===========================\n");
+                    }
+                }
+
+                else {
+                    System.out.println("Please enter a valid option");
+                }
             }
 
 
@@ -161,15 +240,4 @@ public class FrequencyCount {
 }
 
 
-class SimilarWord {
-    public String word;
-    public int count;
-    public double similarity;
 
-    public SimilarWord(String word, int count, double similarity) {
-        this.word = word;
-        this.count = count;
-        this.similarity = similarity;
-    }
-
-}
