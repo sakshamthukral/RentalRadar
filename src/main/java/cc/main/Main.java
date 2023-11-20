@@ -118,12 +118,11 @@ public class Main {
     }
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
-
-        System.out.println("Enter-1: To run web crawling and parsing!");
-        System.out.println("Enter-2: To run Inverted Indexing!");
-        System.out.println("Enter-3: To Exit!");
-        int webOption = sc.nextInt();
         while (true){
+            System.out.println("Enter-1: To run web crawling and parsing!");
+            System.out.println("Enter-2: To run Inverted Indexing!");
+            System.out.println("Enter-3: To Exit!");
+            int webOption = sc.nextInt();
             if (webOption == 1){
                 List<String> paths = getPaths(sc);
                 String HTMLFolderPath=paths.get(0);
