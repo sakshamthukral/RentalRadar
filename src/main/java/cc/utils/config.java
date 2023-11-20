@@ -10,9 +10,9 @@ public class config {
     public static final String lastRunTimeFilePathRental = "lastRunTimeRental.txt";
     public static final String txtFolderPathRentSeeker = "parsed_rentSeeker.ca";
     public static final String lastRunTimeFilePathRentSeeker="lastRunTimeRentSeeker.txt";
-    // public static final String chromeDriverPath = "chromedriver-win64/chromedriver.exe";
-    // public static final String chromeBrowserPath = "chrome-win64/chrome.exe";
-    public static final String chromeDriverPath = "C:/Users/aniru/Downloads/acc_assignment_3/chromedriver-win64/chromedriver-win64/chromedriver.exe";
-    public static final String chromeBrowserPath = "C:/Program Files/Google/Chrome/Application/chrome.exe";
+    public static final String chromeDriverPath = "chromedriver-win64/chromedriver.exe";
+    public static final String chromeBrowserPath = "chrome-win64/chrome.exe";
+   // public static final String chromeDriverPath = "C:/Users/aniru/Downloads/acc_assignment_3/chromedriver-win64/chromedriver-win64/chromedriver.exe";
+   // public static final String chromeBrowserPath = "C:/Program Files/Google/Chrome/Application/chrome.exe";
     public static final String stopwordsFilePath = "stopwords.txt"; // Path to stopwords file
 }
