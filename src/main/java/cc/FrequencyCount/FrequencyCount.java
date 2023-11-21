@@ -2,16 +2,46 @@ package cc.FrequencyCount;
 
 import cc.InvertedIndex.Config;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class FrequencyCount {
     public static final double SIMILARITY_THRESHOLD = 0.5;
     public static final int MAX_SIMILAR_WORDS_COUNT = 5;
+
+    private static int searchInFile(File file, String targetWord) {
+        int count = 0;
+
+        Pattern splitPattern = Pattern.compile("[\\s\\p{Punct}]+");
+
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNext()) {
+                String word = scanner.next();
+                if (word.equalsIgnoreCase(targetWord)) {
+                    count++;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return  count;
+    }
+
+    private static Map<String, Integer> getFrequencyCount (String[] filenames, String searchString) {
+        Map<String, Integer> result = new HashMap<>();
+
+        for (String filename : filenames) {
+            File file = new File(filename);
+
+            if (file.exists() && file.isFile()) {
+                int count = searchInFile(file, searchString);
+                result.put(filename, count);
+            }
+        }
+
+        return result;
+    }
 
     private static FrequentWord countFrequency(File file, String targetWord) {
         // Define a pattern to split the file content based on punctuations, spaces and tabs
@@ -150,92 +180,102 @@ public class FrequencyCount {
     }
 
     public static void main (String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        List<String> stopWOrdsList = Arrays.asList("is", "the", "and", "in", "to", "of", "a", "for", "with", "was", "i", "as", "at", "it", "its", "on", "or", "that", "are");
+        // Testing getFrequencyCount method
+        String[] filenames = {"parsed_rental.ca/page_1_listing_1.txt", "parsed_rental.ca/page_1_listing_2.txt", "parsed_rental.ca/page_1_listing_3.txt", "parsed_rental.ca/page_1_listing_7.txt"};
 
-        try {
-            while (true) {
-                System.out.println("\nSelect one of the following options:\n\t1. Get count for a specific word.\n\t2. Get count of all the words.\n\t3. Get count of the k most frequent words.\n\t0. Exit");
-                System.out.print("Enter option number: ");
-                int selectedOption = scanner.nextInt();
+        Map<String, Integer> results = getFrequencyCount(filenames, "windsor");
 
-                // Consume the newline character
-                scanner.nextLine();
-
-                if (selectedOption == 0) {
-                    System.out.println("Exiting");
-                    break;
-                }
-
-                System.out.print("\nEnter the filename: ");
-                String fileName = scanner.nextLine();
-
-                File file = new File(Config.PARENT_DIR, Config.COMMON_PATH + fileName);
-
-                if (selectedOption == 1) {
-                    System.out.print("Enter the word to count its frequency: ");
-                    String targetWord = scanner.nextLine();
-
-                    FrequentWord wordFrequency = countFrequency(file, targetWord);
-                    System.out.println("Frequency Count for " + targetWord + " : " + wordFrequency.count);
-                    System.out.println("==========" );
-                    System.out.println("Frequency Count for similar words" );
-
-                    if (wordFrequency.similarWords.isEmpty()) {
-                        System.out.println("No similar words found");
-                        return;
-                    }
-
-                    int similarWordsCount = 0;
-                    for (SimilarWord sw : wordFrequency.similarWords) {
-                        if (similarWordsCount >= MAX_SIMILAR_WORDS_COUNT) {
-                            break;
-                        }
-                        System.out.println(sw.word + " : " + sw.count);
-                        similarWordsCount++;
-                    }
-                } else if ( selectedOption == 2 | selectedOption == 3) {
-
-                    if (selectedOption == 2) {
-                        Map<String, Integer> allWordFrequencies = getWordFrequencyMap(file, stopWOrdsList);
-
-                        System.out.println("Printing Frequency Count of all the words in " + fileName);
-                        printWordFrequencies(allWordFrequencies);
-
-                        System.out.println("===========================\n");
-                    } else {
-                        System.out.print("Enter the number of top frequent words: ");
-                        int topKWords = scanner.nextInt();
-
-                        // Consume the newline character
-                        scanner.nextLine();
-
-                        List<Map.Entry<String, Integer>> kFrequentWords = getKMostFrequentWords(file, stopWOrdsList, topKWords);
-
-                        System.out.println("\nTop " + topKWords + " Most Frequent Words:");
-
-                        System.out.println("Word\t:\tFrequency");
-                        // Iterate over the sortedList to print key value pairs
-                        for (Map.Entry<String, Integer> currentWord : kFrequentWords) {
-                            System.out.println(currentWord.getKey() + "\t:\t" + currentWord.getValue());
-                        }
-
-                        System.out.println("===========================\n");
-                    }
-                }
-
-                else {
-                    System.out.println("Please enter a valid option");
-                }
-            }
-
-
-        } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
-        } finally {
-            // Ensure the scanner is closed even if an exception occurs
-            scanner.close();
+        for (Map.Entry<String, Integer> entry : results.entrySet()) {
+            System.out.println(entry.getKey() + "\t:\t" + entry.getValue());
         }
+
+
+//        Scanner scanner = new Scanner(System.in);
+//        List<String> stopWOrdsList = Arrays.asList("is", "the", "and", "in", "to", "of", "a", "for", "with", "was", "i", "as", "at", "it", "its", "on", "or", "that", "are");
+
+//        try {
+//            while (true) {
+//                System.out.println("\nSelect one of the following options:\n\t1. Get count for a specific word.\n\t2. Get count of all the words.\n\t3. Get count of the k most frequent words.\n\t0. Exit");
+//                System.out.print("Enter option number: ");
+//                int selectedOption = scanner.nextInt();
+//
+//                // Consume the newline character
+//                scanner.nextLine();
+//
+//                if (selectedOption == 0) {
+//                    System.out.println("Exiting");
+//                    break;
+//                }
+//
+//                System.out.print("\nEnter the filename: ");
+//                String fileName = scanner.nextLine();
+//
+//                File file = new File(Config.PARENT_DIR, Config.COMMON_PATH + fileName);
+//
+//                if (selectedOption == 1) {
+//                    System.out.print("Enter the word to count its frequency: ");
+//                    String targetWord = scanner.nextLine();
+//
+//                    FrequentWord wordFrequency = countFrequency(file, targetWord);
+//                    System.out.println("Frequency Count for " + targetWord + " : " + wordFrequency.count);
+//                    System.out.println("==========" );
+//                    System.out.println("Frequency Count for similar words" );
+//
+//                    if (wordFrequency.similarWords.isEmpty()) {
+//                        System.out.println("No similar words found");
+//                        return;
+//                    }
+//
+//                    int similarWordsCount = 0;
+//                    for (SimilarWord sw : wordFrequency.similarWords) {
+//                        if (similarWordsCount >= MAX_SIMILAR_WORDS_COUNT) {
+//                            break;
+//                        }
+//                        System.out.println(sw.word + " : " + sw.count);
+//                        similarWordsCount++;
+//                    }
+//                } else if ( selectedOption == 2 | selectedOption == 3) {
+//
+//                    if (selectedOption == 2) {
+//                        Map<String, Integer> allWordFrequencies = getWordFrequencyMap(file, stopWOrdsList);
+//
+//                        System.out.println("Printing Frequency Count of all the words in " + fileName);
+//                        printWordFrequencies(allWordFrequencies);
+//
+//                        System.out.println("===========================\n");
+//                    } else {
+//                        System.out.print("Enter the number of top frequent words: ");
+//                        int topKWords = scanner.nextInt();
+//
+//                        // Consume the newline character
+//                        scanner.nextLine();
+//
+//                        List<Map.Entry<String, Integer>> kFrequentWords = getKMostFrequentWords(file, stopWOrdsList, topKWords);
+//
+//                        System.out.println("\nTop " + topKWords + " Most Frequent Words:");
+//
+//                        System.out.println("Word\t:\tFrequency");
+//                        // Iterate over the sortedList to print key value pairs
+//                        for (Map.Entry<String, Integer> currentWord : kFrequentWords) {
+//                            System.out.println(currentWord.getKey() + "\t:\t" + currentWord.getValue());
+//                        }
+//
+//                        System.out.println("===========================\n");
+//                    }
+//                }
+//
+//                else {
+//                    System.out.println("Please enter a valid option");
+//                }
+//            }
+//
+//
+//        } catch (Exception e) {
+//            System.out.println("An error occurred: " + e.getMessage());
+//        } finally {
+//            // Ensure the scanner is closed even if an exception occurs
+//            scanner.close();
+//        }
     }
 }
 
