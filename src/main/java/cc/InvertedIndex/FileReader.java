@@ -13,9 +13,9 @@ public class FileReader {
     public static List<String> readFile(String parentPath, String fName) {
         // try with resources -> autoCloseable
         List<String> words = new ArrayList<>();
-        try (FileInputStream fis = new FileInputStream(new File(parentPath, fName)); Scanner s = new Scanner(fis)) {
-            while (s.hasNext()){
-                words.add(s.next().replaceAll("[^a-zA-Z0-9]+",""));
+        try (FileInputStream fis = new FileInputStream(parentPath.isBlank() ? new File(fName) : new File(parentPath, fName)); Scanner s = new Scanner(fis)) {
+            while (s.hasNextLine()) {
+                words.add(s.nextLine().replaceAll("[^a-zA-Z0-9 ]+", "").trim().toLowerCase());
             }
 
             return words;

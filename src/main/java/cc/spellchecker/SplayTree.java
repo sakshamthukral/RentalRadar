@@ -116,7 +116,7 @@ public class SplayTree {
     }
 
 
-    private static final int MAX_DISTANCE = 1;  // Maximum allowed Distance for suggestions
+    private static final int MAX_DISTANCE = 2;  // Maximum allowed Distance for suggestions
 
     // Recursive method to traverse the tree and find words starting with the given prefix
     private void findResemblingWordsRecursive(Node node, String word, List<String> words) {
@@ -124,6 +124,9 @@ public class SplayTree {
         if (node == null) {
             return;
         }
+
+//        System.out.printf("RU %s <-> %s :: %d\n", node.key, word, calulateEditDistance(node.key, word));
+//        System.out.printf("RA %s <-> %s :: %d\n", node.key, word, getDistance(node.key, word));
 
         // If the Distance between the node's key and word is below the threshold, add it to suggestions
         if (calulateEditDistance(node.key, word) <= MAX_DISTANCE) {
@@ -161,7 +164,7 @@ public class SplayTree {
                 dp[i][j] = findMin(
                         dp[i - 1][j] + 1,
                         dp[i][j - 1] + 1,
-                        dp[i - 1][j - 1] + 1 - delta(x.charAt(i - 1), x.charAt(i - 1))
+                        dp[i - 1][j - 1] + 1 - delta(x.charAt(i - 1), y.charAt(j - 1))
                 );
             }
         }
