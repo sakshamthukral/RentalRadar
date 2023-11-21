@@ -1,6 +1,5 @@
 package cc.spellchecker;
 
-import cc.InvertedIndex.Config;
 import cc.InvertedIndex.FileReader;
 
 import java.util.List;
@@ -13,7 +12,7 @@ public class SpellCheckerDemo {
     public static void main(String[] args) {
         SpellChecker spellChecker = new SpellChecker();
 
-        List<String> words = FileReader.readFile(Config.PARENT_DIR, Config.COMMON_PATH + FILENAME);
+        List<String> words = FileReader.readFile("",  FILENAME);
         for (String lineWord : words) {
             String word = lineWord.trim();
             spellChecker.loadWordIntoDictionary(word);
@@ -22,10 +21,10 @@ public class SpellCheckerDemo {
         Scanner sc = new Scanner(System.in);
         System.out.println("Welcome to the Spell Checker!");
         System.out.print("Enter a word to check: ");
-        String inputWord = sc.nextLine();
+        String inputWord = sc.nextLine().toLowerCase();
 
         if (!spellChecker.isSpelledCorrectly(inputWord)) {
-            List<String> suggestions = spellChecker.suggestWords(inputWord);
+             List<String> suggestions = spellChecker.suggestWords(inputWord);
 
             if (!suggestions.isEmpty()) {
                 System.out.println("Did you mean: " + suggestions.get(0));
