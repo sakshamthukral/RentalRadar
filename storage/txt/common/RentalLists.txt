@@ -7,7 +7,6 @@ rent
 rental
 rentalrooms
 washrooms
-storerooms
 kitchen
 livingroom
 Windsor
@@ -27,7 +26,7 @@ Halifax
 Victoria
 Saskatoon
 Regina
-St. John's
+St.John's
 Hamilton
 London
 Windsor
@@ -35,3 +34,11 @@ Kitchener
 Victoria
 Burnaby
 Mississauga
+Miramichi
+Blainville
+Granby
+Yellowknife
+Saint-Hyacinthe
+Ottawa
+Saint-Jean-sur-Richelieu
+Calgary
