@@ -31,12 +31,25 @@ public class crawlRental {
     public static void driveCrawling(WebDriver driver, WebDriverWait wait, int numPages, String inputKeyword){
         driver.get(WEBSITE);
         driver.manage().window().maximize();
-        Main.createFolderIfNotExists(config.HTMLFolderPathRental);
+        Main.createFolderIfNotExists(config.HTMLFolderPathRental+"/"+inputKeyword);
 
         switch (inputKeyword) {
             case "Toronto", "toronto" ->
                     driver.get(WEBSITE+"/toronto"); // For searching rentals in Toronto
             case "Windsor", "windsor" -> driver.get(WEBSITE+"/windsor-on");
+            case "Winnipeg", "winnipeg" -> driver.get(WEBSITE+"/winnipeg");
+            case "Montreal", "montreal" -> driver.get(WEBSITE+"/montreal");
+            case "Calgary", "calgary" -> driver.get(WEBSITE+"/calgary");
+            case "Ottawa", "ottawa" -> driver.get(WEBSITE+"/ottawa");
+            case "Edmonton", "edmonton" -> driver.get(WEBSITE+"/edmonton");
+            case "Vancouver", "vancouver" -> driver.get(WEBSITE+"/vancouver");
+            case "Brampton", "brampton" -> driver.get(WEBSITE+"/brampton");
+            case "Hamilton", "hamilton" -> driver.get(WEBSITE+"/hamilton");
+            case "Surrey", "surrey" -> driver.get(WEBSITE+"/surrey");
+            case "Quebec-city", "quebec-city" -> driver.get(WEBSITE+"/quebec-city");
+            case "Halifax", "halifax" -> driver.get(WEBSITE+"/halifax");
+            case "Laval", "laval" -> driver.get(WEBSITE+"/laval");
+            case "London", "london" -> driver.get(WEBSITE+"/london");
         }
 
         int page=1;
@@ -61,7 +74,7 @@ public class crawlRental {
                 String htmlContent = driver.getPageSource();
                 threadWait(5000);
 
-                String fileName = config.HTMLFolderPathRental +"/page_"+page+"_listing_" + i + ".html";
+                String fileName = config.HTMLFolderPathRental+"/"+inputKeyword+"/page_"+page+"_listing_" + i + ".html";
                 try (FileWriter fileWriter = new FileWriter(fileName)) {
                     fileWriter.write(htmlContent);
                     System.out.println("HTML content of " + link + " saved to " + fileName);
@@ -96,23 +109,23 @@ public class crawlRental {
 
     }
     public static void main(String[] args){
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Enter the number of pages(<5 in order to prevent longer running times) you want to scrape: ");
-        int numPages = sc.nextInt();
-        sc.nextLine();
-        System.out.print("Enter the city where you are looking for rentals: ");
-        String city = sc.nextLine();
-//        List<List<String>> rentalLeads = new ArrayList<>();
-
-        System.setProperty("webdriver.chrome.driver","E:/Semester-1/ACC/RealEstateCrawler/chromedriver-win64/chromedriver-win64/chromedriver.exe");
-        ChromeOptions options = new ChromeOptions();
-        options.setBinary("E:/Semester-1/ACC/RealEstateCrawler/chrome-win64/chrome-win64/chrome.exe");
-        options.addArguments("--deny-permission-prompts");
-//        options.addArguments("--headless");
-        WebDriver driver = new ChromeDriver(options);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-
-        driveCrawling(driver,wait, numPages, city);
+//        Scanner sc = new Scanner(System.in);
+//        System.out.print("Enter the number of pages(<5 in order to prevent longer running times) you want to scrape: ");
+//        int numPages = sc.nextInt();
+//        sc.nextLine();
+//        System.out.print("Enter the city where you are looking for rentals: ");
+//        String city = sc.nextLine();
+////        List<List<String>> rentalLeads = new ArrayList<>();
+//
+//        System.setProperty("webdriver.chrome.driver","E:/Semester-1/ACC/RealEstateCrawler/chromedriver-win64/chromedriver-win64/chromedriver.exe");
+//        ChromeOptions options = new ChromeOptions();
+//        options.setBinary("E:/Semester-1/ACC/RealEstateCrawler/chrome-win64/chrome-win64/chrome.exe");
+//        options.addArguments("--deny-permission-prompts");
+////        options.addArguments("--headless");
+//        WebDriver driver = new ChromeDriver(options);
+//        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+//
+//        driveCrawling(driver,wait, numPages, city);
 
     }
 }

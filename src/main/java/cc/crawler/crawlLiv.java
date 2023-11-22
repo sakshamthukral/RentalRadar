@@ -68,7 +68,7 @@ public class crawlLiv {
                 String htmlContent = driver.getPageSource();
                 threadWait(5000);
 
-                String fileName = config.HTMLFolderPathLiv +"/page_"+page+"_listing_" + i + ".html";
+                String fileName = config.HTMLFolderPathLiv+"/"+inputKeyword +"/page_"+page+"_listing_" + i + ".html";
                 try (FileWriter fileWriter = new FileWriter(fileName)) {
                     fileWriter.write(htmlContent);
                     System.out.println("HTML content of " + link + " saved to " + fileName);

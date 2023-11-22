@@ -33,7 +33,7 @@ public class crawlRentSeeker {
     public static void driveCrawling(WebDriver driver, WebDriverWait wait, int numPages, String inputKeyword){
         driver.get(WEBSITE);
         driver.manage().window().maximize();
-        Main.createFolderIfNotExists(config.HTMLFolderPathRentSeeker);
+        Main.createFolderIfNotExists(config.HTMLFolderPathRentSeeker+"/"+inputKeyword);
 
         switch (inputKeyword) {
             case "Toronto", "toronto" ->
@@ -63,7 +63,7 @@ public class crawlRentSeeker {
                 String htmlContent = driver.getPageSource();
                 threadWait(8000);
 
-                String fileName = config.HTMLFolderPathRentSeeker +"/page_"+page+"_listing_" + i + ".html";
+                String fileName = config.HTMLFolderPathRentSeeker+"/"+inputKeyword+"/page_"+page+"_listing_" + i + ".html";
                 try (FileWriter fileWriter = new FileWriter(fileName)) {
                     fileWriter.write(htmlContent);
                     System.out.println("HTML content of " + link + " saved to " + fileName);
@@ -89,7 +89,7 @@ public class crawlRentSeeker {
                 break;
             } catch (Exception e) {
                 System.err.println("An unexpected exception occurred: " + e.getMessage());
-                e.printStackTrace();  // Printing the full stack trace for debugging
+                e.printStackTrace();
                 break;
             }
         }
@@ -98,23 +98,23 @@ public class crawlRentSeeker {
 
     }
     public static void main(String[] args){
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Enter the number of pages(<5 in order to prevent longer running times) you want to scrape: ");
-        int numPages = sc.nextInt();
-        sc.nextLine();
-        System.out.print("Enter the city where you are looking for rentals: ");
-        String city = sc.nextLine();
-//        List<List<String>> rentalLeads = new ArrayList<>();
-
-        System.setProperty("webdriver.chrome.driver","E:/Semester-1/ACC/RealEstateCrawler/chromedriver-win64/chromedriver-win64/chromedriver.exe");
-        ChromeOptions options = new ChromeOptions();
-        options.setBinary("E:/Semester-1/ACC/RealEstateCrawler/chrome-win64/chrome-win64/chrome.exe");
-        options.addArguments("--deny-permission-prompts");
-//        options.addArguments("--headless");
-        WebDriver driver = new ChromeDriver(options);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-
-        driveCrawling(driver,wait, numPages, city);
+//        Scanner sc = new Scanner(System.in);
+//        System.out.print("Enter the number of pages(<5 in order to prevent longer running times) you want to scrape: ");
+//        int numPages = sc.nextInt();
+//        sc.nextLine();
+//        System.out.print("Enter the city where you are looking for rentals: ");
+//        String city = sc.nextLine();
+////        List<List<String>> rentalLeads = new ArrayList<>();
+//
+//        System.setProperty("webdriver.chrome.driver","E:/Semester-1/ACC/RealEstateCrawler/chromedriver-win64/chromedriver-win64/chromedriver.exe");
+//        ChromeOptions options = new ChromeOptions();
+//        options.setBinary("E:/Semester-1/ACC/RealEstateCrawler/chrome-win64/chrome-win64/chrome.exe");
+//        options.addArguments("--deny-permission-prompts");
+////        options.addArguments("--headless");
+//        WebDriver driver = new ChromeDriver(options);
+//        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+//
+//        driveCrawling(driver,wait, numPages, city);
 
     }
 }

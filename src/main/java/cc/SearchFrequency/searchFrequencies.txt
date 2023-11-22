@@ -71,4 +71,4 @@ waterloo 1
 welland 1
 whitby 1
 windsor 11
-winnipeg 1
+winnipeg 2

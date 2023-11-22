@@ -54,6 +54,7 @@ public class Main {
 //        }
 //    }
     public static void saveLastRunTime(String lastRunTimeFilePath, String cityName) {
+        createFolderIfNotExists("logs");
         try (PrintWriter writer = new PrintWriter(new FileWriter(lastRunTimeFilePath, true))) {
             long currentTime = System.currentTimeMillis();
             writer.println(cityName + ":" + currentTime);
@@ -110,18 +111,10 @@ public class Main {
         return Arrays.asList(HTMLFolderPath, txtFolderPath, lastRunTimeFilePath, String.valueOf(websiteCode));
     }
     private static void runCrawlingAndParsing(Scanner sc, String HTMLFolderPath, String txtFolderPath, String lastRunTimeFilePath, int websiteCode){
-        try{
-            FileUtils.deleteDirectory(new File(HTMLFolderPath));
-            FileUtils.deleteDirectory(new File(txtFolderPath));
-        } catch(Exception e){
-            System.out.println(e);
-        }
-
-
         System.out.print("Enter the city where you are looking for rentals: ");
         String city = sc.nextLine();
         while(!config.CITIES.contains(city)) {
-            while (Objects.equals(city, "") || (!city.matches("^[a-zA-Z]+$"))) {
+            while (Objects.equals(city, "") || (!city.matches(config.cityRegex))) {
                 System.out.print("Invalid City please renter the city: ");
                 city = sc.nextLine();
             }
@@ -162,17 +155,26 @@ public class Main {
         WebDriver driver = new ChromeDriver(options);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 
-        createFolderIfNotExists(HTMLFolderPath);
-        createFolderIfNotExists(txtFolderPath);
+        String htmlCityFolder = HTMLFolderPath+"/"+city;
+        String txtCityFolder = txtFolderPath+"/"+city;
+        try{
+            FileUtils.deleteDirectory(new File(htmlCityFolder));
+            FileUtils.deleteDirectory(new File(txtCityFolder));
+        } catch(Exception e){
+            System.out.println(e);
+        }
+
+        createFolderIfNotExists(htmlCityFolder);
+        createFolderIfNotExists(txtCityFolder);
         if(websiteCode==1){
             crawlLiv.driveCrawling(driver, wait, numPages, city);
-            parseLiv.processHtmlFiles(HTMLFolderPath, txtFolderPath);
+            parseLiv.processHtmlFiles(htmlCityFolder, txtCityFolder);
         }else if(websiteCode==2){
             crawlRental.driveCrawling(driver, wait, numPages, city);
-            parseRental.processHtmlFiles(HTMLFolderPath, txtFolderPath);
+            parseRental.processHtmlFiles(htmlCityFolder, txtCityFolder);
         }else if (websiteCode==3) {
             crawlRentSeeker.driveCrawling(driver, wait, numPages, city);
-            parseRentSeeker.processHtmlFiles(HTMLFolderPath, txtFolderPath);
+            parseRentSeeker.processHtmlFiles(htmlCityFolder, txtCityFolder);
         }
         saveLastRunTime(lastRunTimeFilePath, city);
         globCity = city;
@@ -182,8 +184,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         while (true){
             System.out.println("Enter-1: To run web crawling and parsing!");
-            System.out.println("Enter-2: To run Inverted Indexing!");
-            System.out.println("Enter-3: To Exit!");
+            System.out.println("Enter-2: To Exit!");
             int webOption = sc.nextInt();
             if (webOption == 1){
                 List<String> paths = getPaths(sc);
@@ -192,13 +193,12 @@ public class Main {
                 String lastRunTimeFilePath=paths.get(2);
                 int websiteCode=Integer.parseInt(paths.get(3));
 
-                runCrawlingAndParsing(sc, HTMLFolderPath, txtFolderPath, lastRunTimeFilePath, websiteCode); // word compeletion -> spell check -> crawling -> parsing
+                runCrawlingAndParsing(sc, HTMLFolderPath, txtFolderPath, lastRunTimeFilePath, websiteCode); // word completion -> spell check -> crawling -> parsing
 
             }
-            if(webOption == 3){
+            if(webOption == 2){
                 break;
             }
         }
-        
     }
 }
