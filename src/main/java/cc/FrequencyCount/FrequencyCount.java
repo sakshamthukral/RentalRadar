@@ -43,15 +43,15 @@ public class FrequencyCount {
         return result;
     }
 
-    private static Map<String, Map<String, Integer>> getMultipleWordsFrequencyCount(String[] filenames, String[] searchWords) {
-        Map<String, Map<String, Integer>> fileWordFrequencies = new HashMap<>();
+    private static List<WordFrequency> getMultipleWordsFrequencyCount(String[] filenames, String[] searchWords) {
+        List<WordFrequency> fileWordFrequencies = new ArrayList<>();
 
         for (String filename : filenames) {
             File file = new File(filename);
 
             if (file.exists() && file.isFile()) {
                 Map<String, Integer> wordMap = createWordFrequencyMap(file, searchWords);
-                fileWordFrequencies.put(filename, wordMap);
+                fileWordFrequencies.add(new WordFrequency(filename, wordMap));
             }
         }
 
@@ -227,13 +227,11 @@ public class FrequencyCount {
 
         String[] searchWords = {"windsor", "furnished", "apartment"};
 
-        Map<String, Map<String, Integer>> doubleHashFrequency = getMultipleWordsFrequencyCount(filenames, searchWords );
+        List<WordFrequency> wordFrequencies = getMultipleWordsFrequencyCount(filenames, searchWords );
 
-        for (Map.Entry<String, Map<String, Integer>> entry : doubleHashFrequency.entrySet()) {
-            String fileName = entry.getKey();
-            Map<String, Integer> wordFrequencies = entry.getValue();
+        for (WordFrequency wordFrequency : wordFrequencies) {
 
-            System.out.println(fileName + " -> " + wordFrequencies);
+            System.out.println(wordFrequency.filename + " -> " + wordFrequency.wordsCount);
         }
 
 //        Scanner scanner = new Scanner(System.in);
