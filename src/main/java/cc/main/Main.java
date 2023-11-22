@@ -194,18 +194,6 @@ public class Main {
 
                 runCrawlingAndParsing(sc, HTMLFolderPath, txtFolderPath, lastRunTimeFilePath, websiteCode); // word compeletion -> spell check -> crawling -> parsing
 
-//                globCity="windsor";
-//                long lastRunTime = getLastRunTime(lastRunTimeFilePath,globCity);
-//                System.out.println(lastRunTime);
-//                System.out.println("Last Execution Time: " + (lastRunTime > 0 ? new Date(lastRunTime) : "N/A"));
-
-//                System.out.println("Last run time for " + globCity + ": " + lastRunTime);
-//                System.out.print("Do you want to rerun the program? (y/n): ");
-//                String rerunChoice = sc.nextLine().toLowerCase();
-//                if ("y".equals(rerunChoice)) {
-//                    runCrawlingAndParsing(sc, HTMLFolderPath, txtFolderPath, lastRunTimeFilePath, websiteCode);
-//                }
-
             }
             if(webOption == 3){
                 break;
