@@ -1,15 +1,18 @@
 package cc.main;
+import cc.InvertedIndex.InvertIndexingRunner;
 import cc.crawler.*;
 
+import cc.suggestions.spellchecker.SpellCheckerRunner;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.*;
-import cc.Autocomplete.AutoComplete;
+import cc.suggestions.Autocomplete.AutoComplete;
 
 import org.apache.commons.io.FileUtils;
 import cc.utils.config;
@@ -88,29 +91,31 @@ public class Main {
         }
         return Arrays.asList(HTMLFolderPath, txtFolderPath, lastRunTimeFilePath, String.valueOf(websiteCode));
     }
-    private static void runCrawlingAndParsing(Scanner sc, String HTMLFolderPath, String txtFolderPath, String lastRunTimeFilePath, int websiteCode){
+    private static String runCrawlingAndParsing(Scanner sc, String HTMLFolderPath, String txtFolderPath, String lastRunTimeFilePath, int websiteCode){
         System.out.print("Enter the city where you are looking for rentals: ");
         String city = sc.nextLine();
         while(!config.CITIES.contains(city)) {
-            while (Objects.equals(city, "") || (!city.matches(config.cityRegex))) {
+            while (city.isBlank() || (!city.matches(config.cityRegex))) {
                 System.out.print("Invalid City please renter the city: ");
                 city = sc.nextLine();
             }
             String suggestion = "";
+            AutoComplete.init();
+            SpellCheckerRunner.init();
             if (city.length() < config.minCityLength) {
-                AutoComplete ac = new AutoComplete();
-                suggestion = ac.runAutoComplete(city);
+                suggestion = AutoComplete.runAutoComplete(city);
             }
-            if (city.length() >= config.minCityLength || !config.CITIES.contains(suggestion)) {
+            if (suggestion.isBlank() || city.length() >= config.minCityLength) { //TODO rethink the logic
                 System.out.println("SpellChecker suggestions:");
-//                suggestion="windsor";
-//            SpellChecker sc = new SpellChecker();
-//            city=sc.runSpellChecker(city);
+                suggestion = SpellCheckerRunner.spellCheckAndSelectCity(city);
             }
-            System.out.println(suggestion);
+//            System.out.println(suggestion);
             city = suggestion;
 
+            // selected the city -> displaying and incrementing search frequency
+            AutoComplete.searchFrequency(city);
         }
+
 
         long lastRunTime = getLastRunTime(lastRunTimeFilePath,city.toLowerCase());
         System.out.println("Last run time for " + city + ": " + (lastRunTime > 0 ? new Date(lastRunTime) : "N/A"));
@@ -124,7 +129,7 @@ public class Main {
 
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);
         ChromeOptions options = new ChromeOptions();
-        options.setBinary(chromeBrowserPath);
+//        options.setBinary(chromeBrowserPath); FIXME ->  it works without this
         options.addArguments("--deny-permission-prompts");
         options.addArguments("--window-size=1920x1080");
         options.addArguments("--no-sandbox");
@@ -140,6 +145,7 @@ public class Main {
             FileUtils.deleteDirectory(new File(txtCityFolder));
         } catch(Exception e){
             System.out.println(e);
+            System.out.println("We have faced some issue while crawling. Please try again");
         }
 
         createFolderIfNotExists(htmlCityFolder);
@@ -157,6 +163,7 @@ public class Main {
         saveLastRunTime(lastRunTimeFilePath, city);
         globCity = city;
         }
+        return city;
        }
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
@@ -171,8 +178,18 @@ public class Main {
                 String lastRunTimeFilePath=paths.get(2);
                 int websiteCode=Integer.parseInt(paths.get(3));
 
-                runCrawlingAndParsing(sc, HTMLFolderPath, txtFolderPath, lastRunTimeFilePath, websiteCode); // word completion -> spell check -> crawling -> parsing
+                // word completion -> spell check -> crawling -> parsing
+                String cityName = runCrawlingAndParsing(sc, HTMLFolderPath, txtFolderPath, lastRunTimeFilePath, websiteCode);
+                System.out.println(txtFolderPath);
+                System.out.println(cityName);
+                // TODO invertedIndex -> FrequencyCount -> PageRanking
 
+                // Inverted Index
+                List<String> folders = List.of(Path.of(txtFolderPath, cityName).toString());
+                InvertIndexingRunner.init(folders);
+                InvertIndexingRunner.run(folders);
+
+                // FrequencyCount -> PageRanking
             }
             if(webOption == 2){
                 break;

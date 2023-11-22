@@ -1,5 +1,7 @@
 package cc.InvertedIndex;
 
+import cc.utils.FileReader;
+
 import java.util.*;
 
 public class InverseIndexing {
@@ -13,7 +15,7 @@ public class InverseIndexing {
 
     public void addDocument(String parentPath, String documentName) {
         FileReader
-                .readFile(parentPath, documentName)
+                .readFile(parentPath, documentName, FileReader.TYPE.WORDS)
                 .forEach(word -> {
                     if (!stopWords.contains(word)) // Check if the word is a stop word
                         root = insert(root, word.toCharArray(), 0, documentName);

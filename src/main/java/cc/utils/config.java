@@ -13,7 +13,8 @@ public class config {
     public static final String lastRunTimeFilePathLiv = "logs/lastRunTimeLiv.txt";
     public static final String lastRunTimeFilePathRental = "logs/lastRunTimeRental.txt";
     public static final String lastRunTimeFilePathRentSeeker="logs/lastRunTimeRentSeeker.txt";
-    public static final String chromeDriverPath = "chromedriver-win64/chromedriver.exe";
+    // driver is in the /lib folder; unzip
+    public static final String chromeDriverPath = "lib/chromedriver.exe";
     public static final String chromeBrowserPath = "chrome-win64/chrome.exe";
    // public static final String chromeDriverPath = "C:/Users/aniru/Downloads/acc_assignment_3/chromedriver-win64/chromedriver-win64/chromedriver.exe";
    // public static final String chromeBrowserPath = "C:/Program Files/Google/Chrome/Application/chrome.exe";
@@ -42,7 +43,9 @@ public class config {
             "moncton", "drummondville", "caledon", "airdrie", "sarnia", "granby", "fredericton",
             "aurora", "mirabel", "blainville", "welland", "belleville");
 
-    public static final String searchFrequencyFilePath = "src/main/java/cc/SearchFrequency/searchFrequencies.txt";
+    public static final String searchFrequencyFilePath = "searchFrequencies.txt";
     public static final String cityRegex = "^[a-zA-Z]+$";
     public static final int minCityLength = 4;
+
+    public static final String cityNamesFilePath="CityNames.txt";
 }
