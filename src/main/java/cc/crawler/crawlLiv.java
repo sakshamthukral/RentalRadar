@@ -55,8 +55,8 @@ public class crawlLiv {
             System.out.println(currentPageUrl);
 
             List<String> links = new ArrayList<>();
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.sc-42b67f42-0.cqMnTY"))); // Waiting for the next page to appear
-            List<WebElement> leads = driver.findElements(By.cssSelector("a.sc-42b67f42-0.cqMnTY")); // Getting links to all the leads visible on Page-1
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.sc-e20004cf-0.cgdhUn"))); // Waiting for the next page to appear
+            List<WebElement> leads = driver.findElements(By.cssSelector("a.sc-e20004cf-0.cgdhUn")); // Getting links to all the leads visible on Page-1
             for(WebElement lead: leads){
                 String link = lead.getAttribute("href");
                 links.add(link);
