@@ -1,13 +1,10 @@
 package cc.main;
 import cc.crawler.*;
-import io.opentelemetry.exporter.logging.SystemOutLogRecordExporter;
-import org.checkerframework.checker.units.qual.A;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import cc.Autocomplete.Trie;
 
 import java.io.*;
 import java.time.Duration;
@@ -34,25 +31,6 @@ public class Main {
         }
     }
 
-    // Function to save the last execution time
-//    public static void saveLastRunTime(String lastRunTimeFilePath) {
-//        try (PrintWriter writer = new PrintWriter(new FileWriter(lastRunTimeFilePath))) {
-//            long currentTime = System.currentTimeMillis();
-//            writer.println(currentTime);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    // Function to get the last execution time
-//    public static long getLastRunTime(String lastRunTimeFilePath) {
-//        try (BufferedReader reader = new BufferedReader(new FileReader(lastRunTimeFilePath))) {
-//            String line = reader.readLine();
-//            return line != null ? Long.parseLong(line) : 0;
-//        } catch (IOException | NumberFormatException e) {
-//            return 0;
-//        }
-//    }
     public static void saveLastRunTime(String lastRunTimeFilePath, String cityName) {
         createFolderIfNotExists("logs");
         try (PrintWriter writer = new PrintWriter(new FileWriter(lastRunTimeFilePath, true))) {
