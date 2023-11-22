@@ -43,6 +43,42 @@ public class FrequencyCount {
         return result;
     }
 
+    private static Map<String, Map<String, Integer>> getMultipleWordsFrequencyCount(String[] filenames, String[] searchWords) {
+        Map<String, Map<String, Integer>> fileWordFrequencies = new HashMap<>();
+
+        for (String filename : filenames) {
+            File file = new File(filename);
+
+            if (file.exists() && file.isFile()) {
+                Map<String, Integer> wordMap = createWordFrequencyMap(file, searchWords);
+                fileWordFrequencies.put(filename, wordMap);
+            }
+        }
+
+        return fileWordFrequencies;
+
+    }
+
+    public static Map<String, Integer> createWordFrequencyMap(File file, String[] searchWords) {
+        Map<String, Integer> wordMap = new HashMap<>();
+
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNext()) {
+                String word = scanner.next().toLowerCase();
+                for (String searchWord : searchWords) {
+                    if (word.equalsIgnoreCase(searchWord)) {
+                        wordMap.put(word, wordMap.getOrDefault(word, 0) + 1);
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        return wordMap;
+
+    }
+
     private static FrequentWord countFrequency(File file, String targetWord) {
         // Define a pattern to split the file content based on punctuations, spaces and tabs
         Pattern splitPattern = Pattern.compile("[\\s\\p{Punct}]+");
@@ -183,12 +219,22 @@ public class FrequencyCount {
         // Testing getFrequencyCount method
         String[] filenames = {"parsed_rental.ca/page_1_listing_1.txt", "parsed_rental.ca/page_1_listing_2.txt", "parsed_rental.ca/page_1_listing_3.txt", "parsed_rental.ca/page_1_listing_7.txt"};
 
-        Map<String, Integer> results = getFrequencyCount(filenames, "windsor");
+//        Map<String, Integer> results = getFrequencyCount(filenames, "windsor");
+//
+//        for (Map.Entry<String, Integer> entry : results.entrySet()) {
+//            System.out.println(entry.getKey() + "\t:\t" + entry.getValue());
+//        }
 
-        for (Map.Entry<String, Integer> entry : results.entrySet()) {
-            System.out.println(entry.getKey() + "\t:\t" + entry.getValue());
+        String[] searchWords = {"windsor", "furnished", "apartment"};
+
+        Map<String, Map<String, Integer>> doubleHashFrequency = getMultipleWordsFrequencyCount(filenames, searchWords );
+
+        for (Map.Entry<String, Map<String, Integer>> entry : doubleHashFrequency.entrySet()) {
+            String fileName = entry.getKey();
+            Map<String, Integer> wordFrequencies = entry.getValue();
+
+            System.out.println(fileName + " -> " + wordFrequencies);
         }
-
 
 //        Scanner scanner = new Scanner(System.in);
 //        List<String> stopWOrdsList = Arrays.asList("is", "the", "and", "in", "to", "of", "a", "for", "with", "was", "i", "as", "at", "it", "its", "on", "or", "that", "are");
