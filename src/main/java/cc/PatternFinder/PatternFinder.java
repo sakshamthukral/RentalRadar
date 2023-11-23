@@ -1,13 +1,17 @@
 package cc.PatternFinder;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PatternFinder {
+    public static List<String> emailPattern = List.of("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b");
+    public static List<String> phoneNoPattern = List.of( "\\d{3}-\\d{7}", "\\(\\d{3}\\)\\s\\d{3}-\\d{4}", "\\+1\\s\\(\\d{3}\\)\\s\\d{3}-\\d{4}", "\\+1\\s\\(\\d{3}\\)\\s\\d{3}-\\d{4}");
+    public static List<String> currencyAmountPattern = List.of("\\$[0-9,]+(?:\\.[0-9]{2})?");
+    public static List<String> urlPattern = List.of("https?://\\S+");
+    public static List<String> datePattern = List.of("\\d{1,2}/\\d{1,2}/\\d{2,4}", "\\d{1,2}-\\d{1,2}-\\d{2,4}", "\\d{4}/\\d{1,2}/\\d{1,2}", "\\d{4}-\\d{1,2}-\\d{1,2}", "\\d{4}-\\d{2}-\\d{2}", "\\d{1,2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\\d{4}");
+
     private static List<File> getAllFiles(File folder) {
 
         List<File> files = new ArrayList<>();
@@ -22,33 +26,43 @@ public class PatternFinder {
         return files;
     }
 
-    private static Set<String> findInFolder (File folder, String regex) {
-//        List<String> results = new ArrayList<>();
+    private static Set<String> findInFiles (String[] filenames, List<String> regexPatterns) {
 
         Set<String> results = new HashSet<>();
 
-        List<File> files = getAllFiles(folder);
-
-        for (File file : files) {
-            if (file.isFile()) {
-                Set<String> currentFileResult = findInFile(file, regex);
-                results.addAll(currentFileResult);
-            }
+        for (String filename : filenames) {
+            Set<String> currentFileResult = findInFile(filename, regexPatterns);
+            results.addAll(currentFileResult);
         }
 
         return results;
     }
 
-    private static Set<String> findInFile (File file, String regex) {
+    private static Set<String> findInFiles (List<String> filenames, List<String> regexPatterns) {
+
+        Set<String> results = new HashSet<>();
+
+        for (String filename : filenames) {
+            Set<String> currentFileResult = findInFile(filename, regexPatterns);
+            results.addAll(currentFileResult);
+        }
+
+        return results;
+    }
+
+    private static Set<String> findInFile (String filename, List<String> regexPatterns) {
+        File file = new File(filename);
         Set<String> results = new HashSet<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                Pattern pattern = Pattern.compile(regex);
-                Matcher matcher = pattern.matcher(line);
+                for (String regex : regexPatterns) {
+                    Pattern pattern = Pattern.compile(regex);
+                    Matcher matcher = pattern.matcher(line);
 
-                while (matcher.find()) {
-                    results.add(matcher.group());
+                    while (matcher.find()) {
+                        results.add(matcher.group());
+                    }
                 }
             }
         } catch (IOException e) {
@@ -58,44 +72,14 @@ public class PatternFinder {
         return results;
     }
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("**** PATTERN FINDER ****");
 
-        String folderPath = "testDirectory";
-        File folder = new File(folderPath);
-        String pattern = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
+        Set<String> results = findInFile("filteredText.txt" , currencyAmountPattern);
 
-        while(true) {
-            System.out.println("\nWhat do you want to find?");
-            System.out.println("\n\t1. Emails\n\t2. Phone Numbers\n\t3. Amount\n\t4. URLs\n\t5. Dates\n\t(Enter 0 to exit)");
-
-            System.out.print("\nSelect one option from above: ");
-            int selectedOption = scanner.nextInt();
-
-            scanner.nextLine();
-
-            switch (selectedOption) {
-                case 0: {
-                    break;
-                }
-                case 1: {
-                    Set<String> emails = findInFolder(folder, pattern );
-                    System.out.println("\nFollowing emails found\n");
-                    int serialNumber = 1;
-                    for (String email : emails) {
-                        System.out.println(serialNumber + ". " + email);
-                        serialNumber++;
-                    }
-
-                    System.out.println("\n***** Email Finder End *****\n");
-                }
-            }
-
-            if (selectedOption == 0) {
-                System.out.println("Exiting Pattern Finder");
-                break;
-            }
-
+        int serialNumber = 1;
+        for (String result : results) {
+            System.out.println(serialNumber + ". " + result);
+            serialNumber++;
         }
 
     }
