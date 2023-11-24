@@ -33,7 +33,6 @@ public class Main {
             }
         }
     }
-
     public static void saveLastRunTime(String lastRunTimeFilePath, String cityName) {
         createFolderIfNotExists("logs");
         try (PrintWriter writer = new PrintWriter(new FileWriter(lastRunTimeFilePath, true))) {

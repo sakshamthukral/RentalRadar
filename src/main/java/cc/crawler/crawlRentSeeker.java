@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import cc.utils.config;
 
 public class crawlRentSeeker {
@@ -54,7 +57,11 @@ public class crawlRentSeeker {
             List<WebElement> leads = driver.findElements(By.cssSelector("div.listing-card div.image-container>a")); // Getting links to all the leads visible on Page-1
             for(WebElement lead: leads){
                 String link = lead.getAttribute("href");
-                links.add(link);
+                Pattern pattern = Pattern.compile(config.linkRegex);
+                Matcher matcher = pattern.matcher(link);
+                if(matcher.matches()){
+                    links.add(link);
+                }
             }
 
             int i=1;

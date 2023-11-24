@@ -30,11 +30,6 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
-crawled_liv.rent
-crawled_rental.ca
-crawled_rentSeeker.ca
-parsed_rental.ca
-parsed_rentSeeker.ca
 ### VS Code ###
 .vscode/
 
@@ -42,3 +37,5 @@ parsed_rentSeeker.ca
 .DS_Store
 /chromedriver-win64
 /chrome-win64
+/DB
+/logs

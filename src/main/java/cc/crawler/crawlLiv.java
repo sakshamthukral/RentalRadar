@@ -11,6 +11,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class crawlLiv {
     public static final String WEBSITE="https://liv.rent/";
@@ -59,7 +61,11 @@ public class crawlLiv {
             List<WebElement> leads = driver.findElements(By.cssSelector("a.sc-e20004cf-0.cgdhUn")); // Getting links to all the leads visible on Page-1
             for(WebElement lead: leads){
                 String link = lead.getAttribute("href");
-                links.add(link);
+                Pattern pattern = Pattern.compile(config.linkRegex);
+                Matcher matcher = pattern.matcher(link);
+                if(matcher.matches()){
+                    links.add(link);
+                }
             }
 
             int i=1;

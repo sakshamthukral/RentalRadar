@@ -14,10 +14,8 @@ public class config {
     public static final String lastRunTimeFilePathRental = "logs/lastRunTimeRental.txt";
     public static final String lastRunTimeFilePathRentSeeker="logs/lastRunTimeRentSeeker.txt";
     // driver is in the /lib folder; unzip
-    public static final String chromeDriverPath = "lib/chromedriver.exe";
+    public static final String chromeDriverPath = "chromedriver-win64/chromedriver.exe";
     public static final String chromeBrowserPath = "chrome-win64/chrome.exe";
-   // public static final String chromeDriverPath = "C:/Users/aniru/Downloads/acc_assignment_3/chromedriver-win64/chromedriver-win64/chromedriver.exe";
-   // public static final String chromeBrowserPath = "C:/Program Files/Google/Chrome/Application/chrome.exe";
     public static final String stopwordsFilePath = "stopwords.txt"; // Path to stopwords file
 
     public static final String[] cities = {"Toronto", "Montreal", "Calgary", "Ottawa", "Edmonton", "Winnipeg",
@@ -45,7 +43,7 @@ public class config {
 
     public static final String searchFrequencyFilePath = "searchFrequencies.txt";
     public static final String cityRegex = "^[a-zA-Z]+$";
-    public static final int minCityLength = 4;
-
+    public static final String linkRegex = "(https?://[a-zA-Z0-9./-]+)";
+    public static final int minCityLength = 6;
     public static final String cityNamesFilePath="CityNames.txt";
 }
