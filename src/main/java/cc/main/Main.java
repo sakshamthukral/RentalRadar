@@ -184,14 +184,11 @@ public class Main {
                 }
                 System.out.println(txtFolderPath);
                 System.out.println(cityName);
-                // TODO invertedIndex -> FrequencyCount -> PageRanking
 
-                // Inverted Index
+                // invertedIndex -> FrequencyCount -> PageRanking
                 List<String> folders = List.of(Path.of(txtFolderPath, cityName).toString());
                 InvertIndexingRunner.init(folders);
                 InvertIndexingRunner.run(folders);
-
-                // FrequencyCount -> PageRanking
             }
             if(webOption == 2){
                 break;

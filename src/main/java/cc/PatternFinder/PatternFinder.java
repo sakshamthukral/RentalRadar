@@ -26,37 +26,37 @@ public class PatternFinder {
         return files;
     }
 
-    private static Set<String> findInFiles (String[] filenames, List<String> regexPatterns) {
+    private static Set<String> findInFiles (String[] filenames, List<String> regexPattern) {
 
         Set<String> results = new HashSet<>();
 
         for (String filename : filenames) {
-            Set<String> currentFileResult = findInFile(filename, regexPatterns);
+            Set<String> currentFileResult = findInFile(filename, regexPattern);
             results.addAll(currentFileResult);
         }
 
         return results;
     }
 
-    private static Set<String> findInFiles (List<String> filenames, List<String> regexPatterns) {
+    private static Set<String> findInFiles (List<String> filenames, List<String> regexPattern) {
 
         Set<String> results = new HashSet<>();
 
         for (String filename : filenames) {
-            Set<String> currentFileResult = findInFile(filename, regexPatterns);
+            Set<String> currentFileResult = findInFile(filename, regexPattern);
             results.addAll(currentFileResult);
         }
 
         return results;
     }
 
-    private static Set<String> findInFile (String filename, List<String> regexPatterns) {
+    private static Set<String> findInFile (String filename, List<String> regexPattern) {
         File file = new File(filename);
         Set<String> results = new HashSet<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                for (String regex : regexPatterns) {
+                for (String regex : regexPattern) {
                     Pattern pattern = Pattern.compile(regex);
                     Matcher matcher = pattern.matcher(line);
 
@@ -69,18 +69,84 @@ public class PatternFinder {
             e.printStackTrace();
         }
 
+        printPatternResults(filename, results);
+
         return results;
     }
-    public static void main(String[] args) {
-        System.out.println("**** PATTERN FINDER ****");
 
-        Set<String> results = findInFile("filteredText.txt" , currencyAmountPattern);
+    private static void printPatternResults (String filename, Set<String> results) {
+        System.out.println(filename + ":");
+
+        if (results.isEmpty()) {
+            System.out.println("\t(Not found)");
+            return;
+        }
 
         int serialNumber = 1;
         for (String result : results) {
-            System.out.println(serialNumber + ". " + result);
+            System.out.println("\t" + serialNumber + ". " + result);
             serialNumber++;
         }
+    }
 
+    public static void run (List<String> filenames) {
+        System.out.println("\nFind patterns in the ranked pages:\n");
+        boolean sessionFlag = true;
+        int menuUserInput;
+        while (sessionFlag) {
+            menuUserInput = menuTakeUserInput();
+
+            switch (menuUserInput) {
+                case 1 -> {
+                    System.out.println("Finding Emails...");
+                    findInFiles(filenames, emailPattern);
+                }
+                case 2 -> {
+                    System.out.println("Finding Phone numbers...");
+                    findInFiles(filenames, phoneNoPattern);
+                }
+                case 3 -> {
+                    System.out.println("Finding Currency Amounts...");
+                    findInFiles(filenames, currencyAmountPattern);
+                }
+                case 4 -> {
+                    System.out.println("Finding URLs...");
+                    findInFiles(filenames, urlPattern);
+                }
+                case 5 -> {
+                    System.out.println("Finding Dates...");
+                    findInFiles(filenames, datePattern);
+                }
+                default -> sessionFlag = false;
+            }
+        }
+
+    }
+
+    private static int menuTakeUserInput() {
+        System.out.println();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter 1 : To find Emails");
+        System.out.println("Enter 2 : To find Phone Numbers");
+        System.out.println("Enter 3 : To find Currency Amounts");
+        System.out.println("Enter 4 : To find URLs");
+        System.out.println("Enter 5 : To find Dates");
+        System.out.println("Enter 6 : To Return to main menu");
+
+        String input = sc.next();
+
+        while (!input.matches("[1-6]")) {
+            System.out.println("Please enter a valid input");
+            input = sc.next();
+        }
+
+        return Integer.parseInt(input);
+    }
+
+    public static void main(String[] args) {
+
+        List<String> filenames = List.of("DB/parsed_liv.rent/windsor/page_1_listing_4.txt", "DB/parsed_liv.rent/windsor/page_1_listing_3.txt", "DB/parsed_liv.rent/windsor/page_1_listing_1.txt", "DB/parsed_liv.rent/windsor/page_1_listing_2.txt");
+
+        run(filenames);
     }
 }

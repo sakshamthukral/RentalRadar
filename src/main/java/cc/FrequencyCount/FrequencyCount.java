@@ -41,7 +41,7 @@ public class FrequencyCount {
         return result;
     }
 
-    private static List<WordFrequency> getMultipleWordsFrequencyCount(String[] filenames, String[] searchWords) {
+    public static List<WordFrequency> getMultipleWordsFrequencyCount(String[] filenames, String[] searchWords) {
         List<WordFrequency> fileWordFrequencies = new ArrayList<>();
 
         for (String filename : filenames) {
@@ -60,16 +60,28 @@ public class FrequencyCount {
     public static Map<String, Integer> createWordFrequencyMap(File file, String[] searchWords) {
         Map<String, Integer> wordMap = new HashMap<>();
 
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNext()) {
-                String word = scanner.next().toLowerCase();
-                for (String searchWord : searchWords) {
-                    if (word.equalsIgnoreCase(searchWord)) {
-                        wordMap.put(word, wordMap.getOrDefault(word, 0) + 1);
+        // Define a pattern to split the file content based on punctuations, spaces and tabs
+        Pattern splitPattern = Pattern.compile("[\\s\\p{Punct}]+");
+
+        try (BufferedReader bufferReader = new BufferedReader(new FileReader(file))) {
+            String currentLine;
+            while ((currentLine = bufferReader.readLine()) != null) {
+                // Convert the entire line to lower case for accurate frequency count
+                String lowerCaseLine = currentLine.toLowerCase();
+                String[] words = splitPattern.split(lowerCaseLine);
+
+                for (String word : words) {
+                    word = word.trim();
+                    if (!word.isEmpty()) {
+                        for (String searchWord : searchWords) {
+                            if (word.equalsIgnoreCase(searchWord)) {
+                                wordMap.put(word, wordMap.getOrDefault(word, 0) + 1);
+                            }
+                        }
                     }
                 }
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -215,9 +227,11 @@ public class FrequencyCount {
 
     public static void main (String[] args) {
         // Testing getFrequencyCount method
-        String[] filenames = {"parsed_rental.ca/page_1_listing_1.txt", "parsed_rental.ca/page_1_listing_2.txt", "parsed_rental.ca/page_1_listing_3.txt", "parsed_rental.ca/page_1_listing_7.txt"};
+//        String[] filenames = {"parsed_rental.ca/page_1_listing_1.txt", "parsed_rental.ca/page_1_listing_2.txt", "parsed_rental.ca/page_1_listing_3.txt", "parsed_rental.ca/page_1_listing_7.txt"};
+//        String[] searchWords = {"windsor", "furnished", "apartment"};
 
-        String[] searchWords = {"windsor", "furnished", "apartment"};
+        String[] filenames = {"storage/txt/common/doc1.txt", "storage/txt/common/doc2.txt", "storage/txt/common/doc3.txt"};
+        String[] searchWords = {"document", "sample"};
 
         List<WordFrequency> wordFrequencies = getMultipleWordsFrequencyCount(filenames, searchWords );
 
