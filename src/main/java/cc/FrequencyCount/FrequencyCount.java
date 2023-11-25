@@ -41,7 +41,7 @@ public class FrequencyCount {
         return result;
     }
 
-    private static List<WordFrequency> getMultipleWordsFrequencyCount(String[] filenames, String[] searchWords) {
+    public static List<WordFrequency> getMultipleWordsFrequencyCount(String[] filenames, String[] searchWords) {
         List<WordFrequency> fileWordFrequencies = new ArrayList<>();
 
         for (String filename : filenames) {
@@ -215,9 +215,11 @@ public class FrequencyCount {
 
     public static void main (String[] args) {
         // Testing getFrequencyCount method
-        String[] filenames = {"parsed_rental.ca/page_1_listing_1.txt", "parsed_rental.ca/page_1_listing_2.txt", "parsed_rental.ca/page_1_listing_3.txt", "parsed_rental.ca/page_1_listing_7.txt"};
+//        String[] filenames = {"parsed_rental.ca/page_1_listing_1.txt", "parsed_rental.ca/page_1_listing_2.txt", "parsed_rental.ca/page_1_listing_3.txt", "parsed_rental.ca/page_1_listing_7.txt"};
+//        String[] searchWords = {"windsor", "furnished", "apartment"};
 
-        String[] searchWords = {"windsor", "furnished", "apartment"};
+        String[] filenames = {"storage/txt/common/doc1.txt", "storage/txt/common/doc2.txt", "storage/txt/common/doc3.txt"};
+        String[] searchWords = {"document", "sample"};
 
         List<WordFrequency> wordFrequencies = getMultipleWordsFrequencyCount(filenames, searchWords );
 

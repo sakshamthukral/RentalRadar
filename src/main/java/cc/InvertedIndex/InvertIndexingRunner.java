@@ -1,15 +1,20 @@
 package cc.InvertedIndex;
 
+import cc.FrequencyCount.FrequencyCount;
+import cc.FrequencyCount.WordFrequency;
+import cc.pageRanking.PageRanking;
+import cc.pageRanking.PageScore;
 import cc.utils.FileReader;
 import cc.utils.config;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
 public class InvertIndexingRunner {
-    private static InverseIndexing indexer;
     public static final String VALID_WORD_REGEX = "[A-Za-z0-9 ]+";
+    private static InverseIndexing indexer;
 
     public static void init(List<String> folders) {
         indexer = new InverseIndexing();
@@ -25,11 +30,12 @@ public class InvertIndexingRunner {
 
     // may need to work on removing symbols
     private static void addWordsTask(List<String> folders) {
+        //TODO check valid folder directory
         for (String parentPath : folders) {
             String[] fileNames = FileReader.listAllFiles(parentPath);
             for (String fileName : fileNames) {
                 indexer.addDocument(parentPath, fileName);
-                System.out.printf("DONE - %s/%s\n", parentPath, fileName);
+                System.out.printf("DONE - %s\n", Path.of(parentPath, fileName));
             }
         }
     }
@@ -59,8 +65,7 @@ public class InvertIndexingRunner {
     private static int menuTakeUserInput() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter 1 : To search for words in the crawled documents");
-        System.out.println("Enter 2 : To Reload the indexing");
-        System.out.println("Enter 3 : To Return to main menu");
+        System.out.println("Enter 2 : To Return to main menu");
 
         String input = sc.next();
 
@@ -81,8 +86,29 @@ public class InvertIndexingRunner {
             System.out.printf("No documents found containing the query \"%s\"\n", query);
             System.out.println("Try again with another search query");
         } else {
-            System.out.printf("Documents containing the query \"%s\" : ", query);
-            System.out.printf("%s \n", String.join(" , ", result));
+            System.out.printf("Documents containing the query \"%s\" : \n", query);
+            System.out.printf("%s \n", String.join("\n", result));
+            System.out.println();
+
+            // showing frequency count
+            System.out.println("Frequency Counting . . .");
+
+            String[] words = query.split(" ");
+            String[] documents = result.toArray(new String[]{});
+            List<WordFrequency> wordFrequencyList = FrequencyCount.getMultipleWordsFrequencyCount(documents, words);
+
+            for (WordFrequency wf : wordFrequencyList) {
+                System.out.printf("%s - word frequencies :\n", wf.filename);
+                for (String key : wf.wordsCount.keySet()) {
+                    System.out.printf("%s - %s\n", key, wf.wordsCount.get(key));
+                }
+                System.out.println();
+            }
+
+            // PageRanking
+            PageScore[] sortedPages = PageRanking.rank(wordFrequencyList);
+
+            // TODO PatternFinding
         }
         System.out.println();
     }

@@ -2,6 +2,7 @@ package cc.InvertedIndex;
 
 import cc.utils.FileReader;
 
+import java.nio.file.Path;
 import java.util.*;
 
 public class InverseIndexing {
@@ -18,7 +19,7 @@ public class InverseIndexing {
                 .readFile(parentPath, documentName, FileReader.TYPE.WORDS)
                 .forEach(word -> {
                     if (!stopWords.contains(word)) // Check if the word is a stop word
-                        root = insert(root, word.toCharArray(), 0, documentName);
+                        root = insert(root, word.toCharArray(), 0, Path.of(parentPath, documentName).toString()); // TODO check if any other option
                 });
     }
 
