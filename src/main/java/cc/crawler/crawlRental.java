@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import cc.main.*;
 import cc.utils.config;
+import cc.utils.helper;
 public class crawlRental {
     public static final String WEBSITE="https://rentals.ca";
 //    public static final String HTMLFolderPath=config.HTMLFolderPathRental;
@@ -31,10 +32,11 @@ public class crawlRental {
         }
     }
 
-    public static void driveCrawling(WebDriver driver, WebDriverWait wait, int numPages, String inputKeyword){
+    public static boolean driveCrawling(WebDriver driver, WebDriverWait wait, int numPages, String inputKeyword){
+        boolean gotLeads = true;
         driver.get(WEBSITE);
         driver.manage().window().maximize();
-        Main.createFolderIfNotExists(config.HTMLFolderPathRental+"/"+inputKeyword);
+        helper.createFolderIfNotExists(config.HTMLFolderPathRental+"/"+inputKeyword);
 
         switch (inputKeyword) {
             case "Toronto", "toronto" ->
@@ -64,8 +66,17 @@ public class crawlRental {
             System.out.println(currentPageUrl);
 
             List<String> links = new ArrayList<>();
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.listing-card__details-link")));
-            List<WebElement> leads = driver.findElements(By.cssSelector("a.listing-card__details-link")); // Getting links to all the leads visible on Page-1
+            List<WebElement> leads;
+
+            try {
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.listing-card__details-link")));
+                leads = driver.findElements(By.cssSelector("a.listing-card__details-link")); // Getting links to all the leads visible on Page-1
+            } catch (TimeoutException e){
+                System.err.println("Leads not found!!");
+                gotLeads=false;
+                break;
+            }
+
             for(WebElement lead: leads){
                 String link = lead.getAttribute("href");
                 Pattern pattern = Pattern.compile(config.linkRegex);
@@ -111,9 +122,11 @@ public class crawlRental {
                 break;
             }
         }
-        driver.quit();
-        System.out.println("Crawling of Rental Leads Complete Successfully!!");
-
+        if(gotLeads){
+            driver.quit();
+        }
+//        System.out.println("Crawling of Rental Leads Complete Successfully!!");
+        return gotLeads;
     }
     public static void main(String[] args){
 //        Scanner sc = new Scanner(System.in);

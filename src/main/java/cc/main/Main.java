@@ -4,37 +4,30 @@ import cc.crawler.*;
 
 import cc.suggestions.spellchecker.SpellCheckerRunner;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.*;
 import cc.suggestions.Autocomplete.AutoComplete;
-
+import cc.utils.helper;
 import org.apache.commons.io.FileUtils;
 import cc.utils.config;
 public class Main {
-    public static final String chromeDriverPath = config.chromeDriverPath;
-    public static final String chromeBrowserPath = config.chromeBrowserPath;
     public static String globCity = "";
+    public static int globWebsiteCode;
+    public static String HTMLFolderPath;
+    public static String txtFolderPath;
+    public static String lastRunTimeFilePath;
 
-    public static void createFolderIfNotExists(String folderPath){
-        File folder = new File(folderPath);
-        if(!folder.exists()){
-            boolean folderCreated = folder.mkdirs();
-            if(folderCreated){
-                System.out.println("Folder created: "+ folderPath);
-            }else{
-                System.err.println("Failed to create folder: "+folderPath);
-                System.exit(1);
-            }
-        }
+
+    public static void changeWebsitePaths(String htmlCityFolder, String txtCityFolder) throws IOException {
+        FileUtils.deleteDirectory(new File(htmlCityFolder));
+        FileUtils.deleteDirectory(new File(txtCityFolder));
+        getPaths(globWebsiteCode);
     }
     public static void saveLastRunTime(String lastRunTimeFilePath, String cityName) {
-        createFolderIfNotExists("logs");
+        helper.createFolderIfNotExists("logs");
         try (PrintWriter writer = new PrintWriter(new FileWriter(lastRunTimeFilePath, true))) {
             long currentTime = System.currentTimeMillis();
             writer.println(cityName + ":" + currentTime);
@@ -62,15 +55,7 @@ public class Main {
         }
     }
 
-    private static List<String> getPaths(Scanner sc){
-        System.out.println("Enter 1 : To checkout rental leads from liv.rent");
-        System.out.println("Enter 2 : To checkout rental leads from rentals.ca");
-        System.out.println("Enter 3 : To checkout rental leads from rentseeker.ca");
-        int websiteCode = sc.nextInt();
-        sc.nextLine();
-        String HTMLFolderPath="";
-        String txtFolderPath="";
-        String lastRunTimeFilePath="";
+    private static void getPaths(int websiteCode){
         switch (websiteCode) {
             case 1 ->{
                 HTMLFolderPath=config.HTMLFolderPathLiv;
@@ -88,9 +73,8 @@ public class Main {
                 lastRunTimeFilePath=config.lastRunTimeFilePathRentSeeker;
             }
         }
-        return Arrays.asList(HTMLFolderPath, txtFolderPath, lastRunTimeFilePath, String.valueOf(websiteCode));
     }
-    private static String runCrawlingAndParsing(Scanner sc, String HTMLFolderPath, String txtFolderPath, String lastRunTimeFilePath, int websiteCode){
+    public static String runCrawlingAndParsing(Scanner sc) throws IOException {
         System.out.print("Enter the city where you are looking for rentals: ");
         String city = sc.nextLine();
         while(!config.CITIES.contains(city)) {
@@ -108,57 +92,70 @@ public class Main {
                 System.out.println("SpellChecker suggestions:");
                 suggestion = SpellCheckerRunner.spellCheckAndSelectCity(city);
             }
-//            System.out.println(suggestion);
             city = suggestion;
 
             // selected the city -> displaying and incrementing search frequency
             AutoComplete.searchFrequency(city);
         }
 
-
         long lastRunTime = getLastRunTime(lastRunTimeFilePath,city.toLowerCase());
         System.out.println("Last run time for " + city + ": " + (lastRunTime > 0 ? new Date(lastRunTime) : "N/A"));
         System.out.print("Do you want to rerun the program? (y/n): ");
         String rerunChoice = sc.nextLine().toLowerCase();
         if ("y".equals(rerunChoice)) {
-
-
         System.out.print("Enter the number of pages(<5 in order to prevent longer running times) you want to scrape: ");
         int numPages = sc.nextInt();
 
-        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
-        ChromeOptions options = new ChromeOptions();
-//        options.setBinary(chromeBrowserPath); FIXME ->  it works without this
-        options.addArguments("--deny-permission-prompts");
-        options.addArguments("--window-size=1920x1080");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--headless");
-        WebDriver driver = new ChromeDriver(options);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        Object[] driverAndWait = helper.createChromeDriverWithWait();
+        WebDriver driver = (WebDriver) driverAndWait[0];
+        WebDriverWait wait = (WebDriverWait) driverAndWait[1];
 
-        String htmlCityFolder = HTMLFolderPath+"/"+city;
-        String txtCityFolder = txtFolderPath+"/"+city;
-        try{
-            FileUtils.deleteDirectory(new File(htmlCityFolder));
-            FileUtils.deleteDirectory(new File(txtCityFolder));
-        } catch(Exception e){
-            System.out.println(e);
-            System.out.println("We have faced some issue while crawling. Please try again");
+        boolean gotLeads=false;
+        int count=0;
+        while (!gotLeads || count<3){
+            count+=1;
+            String htmlCityFolder = HTMLFolderPath+"/"+city;
+            String txtCityFolder = txtFolderPath+"/"+city;
+            try{
+                FileUtils.deleteDirectory(new File(htmlCityFolder));
+                FileUtils.deleteDirectory(new File(txtCityFolder));
+            } catch(Exception e){
+                System.out.println(e);
+                System.out.println("We have faced some issue while crawling. Please try again");
+            }
+            helper.createFolderIfNotExists(htmlCityFolder);
+            helper.createFolderIfNotExists(txtCityFolder);
+            if(globWebsiteCode==1){
+                gotLeads = crawlLiv.driveCrawling(driver, wait, numPages, city);
+                if(gotLeads){
+                    parseLiv.processHtmlFiles(htmlCityFolder, txtCityFolder);
+                }
+                else{
+                    System.out.println("No Leads found for "+city+" in liv.rent, therefore initiated checking rentals.ca");
+                    globWebsiteCode=2;
+                    changeWebsitePaths(htmlCityFolder,txtCityFolder);
+                }
+            }else if(globWebsiteCode==2){
+                gotLeads = crawlRental.driveCrawling(driver, wait, numPages, city);
+                if(gotLeads){
+                    parseRental.processHtmlFiles(htmlCityFolder, txtCityFolder);
+                } else {
+                    System.out.println("No Leads found for "+city+" in rentals.ca, therefore initiated checking rentSeeker.ca");
+                    globWebsiteCode=3;
+                    changeWebsitePaths(htmlCityFolder,txtCityFolder);
+                }
+            }else if (globWebsiteCode==3) {
+                gotLeads = crawlRentSeeker.driveCrawling(driver, wait, numPages, city);
+                if(gotLeads){
+                    parseRental.processHtmlFiles(htmlCityFolder, txtCityFolder);
+                } else {
+                    System.out.println("No Leads found for "+city+" in rentals.ca, therefore initiated checking rentSeeker.ca");
+                    globWebsiteCode=1;
+                    changeWebsitePaths(htmlCityFolder,txtCityFolder);
+                }
+            }
         }
 
-        createFolderIfNotExists(htmlCityFolder);
-        createFolderIfNotExists(txtCityFolder);
-        if(websiteCode==1){
-            crawlLiv.driveCrawling(driver, wait, numPages, city);
-            parseLiv.processHtmlFiles(htmlCityFolder, txtCityFolder);
-        }else if(websiteCode==2){
-            crawlRental.driveCrawling(driver, wait, numPages, city);
-            parseRental.processHtmlFiles(htmlCityFolder, txtCityFolder);
-        }else if (websiteCode==3) {
-            crawlRentSeeker.driveCrawling(driver, wait, numPages, city);
-            parseRentSeeker.processHtmlFiles(htmlCityFolder, txtCityFolder);
-        }
         saveLastRunTime(lastRunTimeFilePath, city);
         globCity = city;
         }
@@ -171,14 +168,20 @@ public class Main {
             System.out.println("Enter-2: To Exit!");
             int webOption = sc.nextInt();
             if (webOption == 1){
-                List<String> paths = getPaths(sc);
-                String HTMLFolderPath=paths.get(0);
-                String txtFolderPath=paths.get(1);
-                String lastRunTimeFilePath=paths.get(2);
-                int websiteCode=Integer.parseInt(paths.get(3));
+                System.out.println("Enter 1 : To checkout rental leads from liv.rent");
+                System.out.println("Enter 2 : To checkout rental leads from rentals.ca");
+                System.out.println("Enter 3 : To checkout rental leads from rentseeker.ca");
+                globWebsiteCode = sc.nextInt();
+                sc.nextLine();
+                getPaths(globWebsiteCode);
 
                 // word completion -> spell check -> crawling -> parsing
-                String cityName = runCrawlingAndParsing(sc, HTMLFolderPath, txtFolderPath, lastRunTimeFilePath, websiteCode);
+                String cityName = null;
+                try {
+                    cityName = runCrawlingAndParsing(sc);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 System.out.println(txtFolderPath);
                 System.out.println(cityName);
                 // TODO invertedIndex -> FrequencyCount -> PageRanking
@@ -194,5 +197,10 @@ public class Main {
                 break;
             }
         }
+//        getPaths(2);
+//        System.out.println(HTMLFolderPath);
+//        System.out.println(txtFolderPath);
+//        System.out.println(lastRunTimeFilePath);
+
     }
 }

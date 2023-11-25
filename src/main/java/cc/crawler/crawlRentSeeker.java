@@ -1,26 +1,24 @@
 package cc.crawler;
 
-import cc.main.Main;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.Duration;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cc.utils.config;
+import cc.utils.helper;
 
 public class crawlRentSeeker {
     public static final String WEBSITE="https://www.rentseeker.ca";
@@ -33,10 +31,11 @@ public class crawlRentSeeker {
         }
     }
 
-    public static void driveCrawling(WebDriver driver, WebDriverWait wait, int numPages, String inputKeyword){
+    public static boolean driveCrawling(WebDriver driver, WebDriverWait wait, int numPages, String inputKeyword){
+        boolean gotLeads=true;
         driver.get(WEBSITE);
         driver.manage().window().maximize();
-        Main.createFolderIfNotExists(config.HTMLFolderPathRentSeeker+"/"+inputKeyword);
+        helper.createFolderIfNotExists(config.HTMLFolderPathRentSeeker+"/"+inputKeyword);
 
         switch (inputKeyword) {
             case "Toronto", "toronto" ->
@@ -53,8 +52,16 @@ public class crawlRentSeeker {
             System.out.println(currentPageUrl);
 
             List<String> links = new ArrayList<>();
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.listing-card div.image-container>a"))); // Waiting for the next page to appear
-            List<WebElement> leads = driver.findElements(By.cssSelector("div.listing-card div.image-container>a")); // Getting links to all the leads visible on Page-1
+            List<WebElement> leads;
+            try{
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.listing-card div.image-container>a"))); // Waiting for the next page to appear
+                leads= driver.findElements(By.cssSelector("div.listing-card div.image-container>a")); // Getting links to all the leads visible on Page-1
+            } catch (TimeoutException e){
+                System.err.println("Leads not found!!");
+                gotLeads=false;
+                break;
+            }
+
             for(WebElement lead: leads){
                 String link = lead.getAttribute("href");
                 Pattern pattern = Pattern.compile(config.linkRegex);
@@ -100,9 +107,11 @@ public class crawlRentSeeker {
                 break;
             }
         }
-        driver.quit();
-        System.out.println("Crawling of Rental Leads Complete Successfully!!");
-
+        if (gotLeads){
+            driver.quit();
+        }
+//        System.out.println("Crawling of Rental Leads Complete Successfully!!");
+        return gotLeads;
     }
     public static void main(String[] args){
 //        Scanner sc = new Scanner(System.in);

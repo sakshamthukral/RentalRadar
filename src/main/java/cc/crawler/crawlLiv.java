@@ -36,7 +36,8 @@ public class crawlLiv {
         }
     }
 
-    public static void driveCrawling(WebDriver driver, WebDriverWait wait, int numPages, String inputKeyword){
+    public static boolean driveCrawling(WebDriver driver, WebDriverWait wait, int numPages, String inputKeyword){
+        boolean gotLeads=true;
         driver.get(WEBSITE);
         driver.manage().window().maximize();
 
@@ -45,6 +46,7 @@ public class crawlLiv {
             case "Toronto", "toronto" ->
                     driver.findElement(By.cssSelector("div.sc-ece85b1a-0.hHScca")).click(); // For searching rentals in Toronto
             case "Windsor", "windsor" -> driver.get("https://liv.rent/rental-listings/city/windsor-on");
+            case "Winnipeg", "winnipeg" -> driver.get("https://liv.rent/rental-listings/city/winnipeg");
         }
 
 
@@ -57,8 +59,19 @@ public class crawlLiv {
             System.out.println(currentPageUrl);
 
             List<String> links = new ArrayList<>();
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.sc-e20004cf-0.cgdhUn"))); // Waiting for the next page to appear
-            List<WebElement> leads = driver.findElements(By.cssSelector("a.sc-e20004cf-0.cgdhUn")); // Getting links to all the leads visible on Page-1
+            List<WebElement> leads;
+            try {
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.sc-e20004cf-0.cgdhUn"))); // Waiting for the next page to appear
+                leads = driver.findElements(By.cssSelector("a.sc-e20004cf-0.cgdhUn")); // Getting links to all the leads visible on Page-1
+            } catch (TimeoutException e) {
+                System.err.println("Leads not found!!");
+                gotLeads=false;
+                break;
+            }
+//            if(leads.size()==0){
+//                gotLeads=false;
+//                break;
+//            }
             for(WebElement lead: leads){
                 String link = lead.getAttribute("href");
                 Pattern pattern = Pattern.compile(config.linkRegex);
@@ -104,8 +117,11 @@ public class crawlLiv {
                 break;
             }
         }
-        driver.quit();
-        System.out.println("Crawling of Rental Leads Complete Successfully!!");
+        if(gotLeads){
+            driver.quit();
+        }
+//        System.out.println("Crawling of Rental Leads Complete Successfully!!");
+        return gotLeads;
 
     }
     public static void main(String[] args){
