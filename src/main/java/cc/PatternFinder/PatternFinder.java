@@ -47,6 +47,10 @@ public class PatternFinder {
             results.addAll(currentFileResult);
         }
 
+        if (results.isEmpty()) {
+            System.out.println("No results found.");
+        }
+
         return results;
     }
 
@@ -75,12 +79,10 @@ public class PatternFinder {
     }
 
     private static void printPatternResults (String filename, Set<String> results) {
-        System.out.println(filename + ":");
-
         if (results.isEmpty()) {
-            System.out.println("\t(Not found)");
             return;
         }
+        System.out.println(filename + ":");
 
         int serialNumber = 1;
         for (String result : results) {
