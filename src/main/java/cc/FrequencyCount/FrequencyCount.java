@@ -60,16 +60,28 @@ public class FrequencyCount {
     public static Map<String, Integer> createWordFrequencyMap(File file, String[] searchWords) {
         Map<String, Integer> wordMap = new HashMap<>();
 
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNext()) {
-                String word = scanner.next().toLowerCase();
-                for (String searchWord : searchWords) {
-                    if (word.equalsIgnoreCase(searchWord)) {
-                        wordMap.put(word, wordMap.getOrDefault(word, 0) + 1);
+        // Define a pattern to split the file content based on punctuations, spaces and tabs
+        Pattern splitPattern = Pattern.compile("[\\s\\p{Punct}]+");
+
+        try (BufferedReader bufferReader = new BufferedReader(new FileReader(file))) {
+            String currentLine;
+            while ((currentLine = bufferReader.readLine()) != null) {
+                // Convert the entire line to lower case for accurate frequency count
+                String lowerCaseLine = currentLine.toLowerCase();
+                String[] words = splitPattern.split(lowerCaseLine);
+
+                for (String word : words) {
+                    word = word.trim();
+                    if (!word.isEmpty()) {
+                        for (String searchWord : searchWords) {
+                            if (word.equalsIgnoreCase(searchWord)) {
+                                wordMap.put(word, wordMap.getOrDefault(word, 0) + 1);
+                            }
+                        }
                     }
                 }
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 

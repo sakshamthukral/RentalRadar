@@ -2,12 +2,14 @@ package cc.InvertedIndex;
 
 import cc.FrequencyCount.FrequencyCount;
 import cc.FrequencyCount.WordFrequency;
+import cc.PatternFinder.PatternFinder;
 import cc.pageRanking.PageRanking;
 import cc.pageRanking.PageScore;
 import cc.utils.FileReader;
 import cc.utils.config;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -109,6 +111,13 @@ public class InvertIndexingRunner {
             PageScore[] sortedPages = PageRanking.rank(wordFrequencyList);
 
             // TODO PatternFinding
+            List<String> filenames = new ArrayList<>();
+            for (WordFrequency wf : wordFrequencyList) {
+                filenames.add(wf.filename);
+            }
+
+            PatternFinder.run(filenames);
+
         }
         System.out.println();
     }
