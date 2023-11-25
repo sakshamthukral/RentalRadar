@@ -1,6 +1,7 @@
 package cc.crawler;
 
 import cc.utils.config;
+import cc.utils.helper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -40,6 +41,7 @@ public class crawlLiv {
         boolean gotLeads=true;
         driver.get(WEBSITE);
         driver.manage().window().maximize();
+        helper.createFolderIfNotExists(config.descriptionLiv+"/"+inputKeyword);
 
         driver.findElement(By.cssSelector("button.sc-9b749994-8.lhKUEI")).click(); // Clicking on Allowing cookies when pop-up comes
         switch (inputKeyword) {
@@ -85,7 +87,29 @@ public class crawlLiv {
             for(String link: links){
                 driver.get(link);
                 String htmlContent = driver.getPageSource();
+                threadWait(8000);
+                try {
+                    WebElement readMoreBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("p.sc-d2c88f17-0.sc-d2c88f17-1.iybCNV.inA-dsu")));
+                    readMoreBtn.click();
+                } catch (NoSuchElementException e) {
+                    // Handle the case when "Read More" button is not found
+                    System.out.println("Read More button not found. Skipping...");
+                } catch (TimeoutException e) {
+                    System.out.println("Read More button not found. Skipping...");
+                } catch (Exception e) {
+                    System.out.println("Read More button not found. Skipping...");
+                }
                 threadWait(5000);
+                WebElement description = driver.findElement(By.cssSelector("p.sc-d2c88f17-0.iybCNV"));
+                String descriptionText = description.getText();
+
+                String descriptionFile = config.descriptionLiv+"/"+inputKeyword +"/page_"+page+"_listing_" + i + ".txt";
+                try (FileWriter fileWriter = new FileWriter(descriptionFile)) {
+                    fileWriter.write(descriptionText);
+                    System.out.println("Description of " + link + " saved to " + descriptionFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 String fileName = config.HTMLFolderPathLiv+"/"+inputKeyword +"/page_"+page+"_listing_" + i + ".html";
                 try (FileWriter fileWriter = new FileWriter(fileName)) {
@@ -100,7 +124,7 @@ public class crawlLiv {
             }
             page++;
             driver.get(currentPageUrl);
-            threadWait(5000);
+            threadWait(10000);
 
             try{
                 WebElement nextPage = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("button#next-page")));
@@ -117,9 +141,7 @@ public class crawlLiv {
                 break;
             }
         }
-        if(gotLeads){
-            driver.quit();
-        }
+
 //        System.out.println("Crawling of Rental Leads Complete Successfully!!");
         return gotLeads;
 

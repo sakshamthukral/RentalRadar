@@ -36,6 +36,7 @@ public class crawlRentSeeker {
         driver.get(WEBSITE);
         driver.manage().window().maximize();
         helper.createFolderIfNotExists(config.HTMLFolderPathRentSeeker+"/"+inputKeyword);
+        helper.createFolderIfNotExists(config.descriptionRentSeeker+"/"+inputKeyword);
 
         switch (inputKeyword) {
             case "Toronto", "toronto" ->
@@ -76,6 +77,44 @@ public class crawlRentSeeker {
                 driver.get(link);
                 String htmlContent = driver.getPageSource();
                 threadWait(8000);
+//                try {
+//                    WebElement readMoreBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("a.truncated-content__read-more.btn-cta.btn-cta--secondary")));
+//                    readMoreBtn.click();
+//                } catch (NoSuchElementException e) {
+//                    // Handle the case when "Read More" button is not found
+//                    System.out.println("Read More button not found. Skipping...");
+//                } catch (TimeoutException e) {
+//                    System.out.println("Read More button not found. Skipping...");
+//                } catch (Exception e) {
+//                    System.out.println("Read More button not found. Skipping...");
+//                }
+//                threadWait(5000);
+                StringBuilder concatenatedText = new StringBuilder();
+                try{
+                    WebElement description = driver.findElement(By.cssSelector("section#description"));
+                    List<WebElement> childElements = description.findElements(By.xpath(".//*"));
+                    for (WebElement child : childElements) {
+                        concatenatedText.append(child.getText()).append("\n");
+                    }
+                } catch (NoSuchElementException e){
+                    System.out.println("No Description Available!!");
+                } catch (TimeoutException e){
+                    System.out.println("No Description Available!!");
+                } catch (Exception e) {
+                    System.out.println("No Description Available!!");
+                }
+
+
+
+//                String descriptionText = description.getText();
+//
+                String descriptionFile = config.descriptionRentSeeker+"/"+inputKeyword +"/page_"+page+"_listing_" + i + ".txt";
+                try (FileWriter fileWriter = new FileWriter(descriptionFile)) {
+                    fileWriter.write(concatenatedText.toString());
+                    System.out.println("Description of " + link + " saved to " + descriptionFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 String fileName = config.HTMLFolderPathRentSeeker+"/"+inputKeyword+"/page_"+page+"_listing_" + i + ".html";
                 try (FileWriter fileWriter = new FileWriter(fileName)) {
@@ -107,9 +146,7 @@ public class crawlRentSeeker {
                 break;
             }
         }
-        if (gotLeads){
-            driver.quit();
-        }
+
 //        System.out.println("Crawling of Rental Leads Complete Successfully!!");
         return gotLeads;
     }

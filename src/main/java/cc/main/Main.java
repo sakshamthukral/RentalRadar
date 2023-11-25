@@ -112,7 +112,7 @@ public class Main {
 
         boolean gotLeads=false;
         int count=0;
-        while (!gotLeads || count<3){
+        while (!gotLeads && count<3){
             count+=1;
             String htmlCityFolder = HTMLFolderPath+"/"+city;
             String txtCityFolder = txtFolderPath+"/"+city;
@@ -155,12 +155,12 @@ public class Main {
                 }
             }
         }
-
+        driver.quit();
         saveLastRunTime(lastRunTimeFilePath, city);
         globCity = city;
         }
         return city;
-       }
+    }
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
         while (true){

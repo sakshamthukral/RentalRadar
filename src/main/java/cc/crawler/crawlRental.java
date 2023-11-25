@@ -7,11 +7,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import java.time.Duration;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -37,6 +32,7 @@ public class crawlRental {
         driver.get(WEBSITE);
         driver.manage().window().maximize();
         helper.createFolderIfNotExists(config.HTMLFolderPathRental+"/"+inputKeyword);
+        helper.createFolderIfNotExists(config.descriptionRental+"/"+inputKeyword);
 
         switch (inputKeyword) {
             case "Toronto", "toronto" ->
@@ -91,6 +87,34 @@ public class crawlRental {
                 driver.get(link);
                 String htmlContent = driver.getPageSource();
                 threadWait(5000);
+                try {
+                    WebElement readMoreBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("a.truncated-content__read-more.btn-cta.btn-cta--secondary")));
+                    readMoreBtn.click();
+                } catch (NoSuchElementException e) {
+                    // Handle the case when "Read More" button is not found
+                    System.out.println("Read More button not found. Skipping...");
+                } catch (TimeoutException e) {
+                    System.out.println("Read More button not found. Skipping...");
+                } catch (Exception e) {
+                    System.out.println("Read More button not found. Skipping...");
+                }
+                threadWait(5000);
+                WebElement description = driver.findElement(By.cssSelector("div.truncated-content__full.u-from-wysiwyg"));
+                List<WebElement> childElements = description.findElements(By.xpath(".//*"));
+                StringBuilder concatenatedText = new StringBuilder();
+                for (WebElement child : childElements) {
+                    concatenatedText.append(child.getText()).append("\n");
+                }
+
+//                String descriptionText = description.getText();
+//
+                String descriptionFile = config.descriptionRental+"/"+inputKeyword +"/page_"+page+"_listing_" + i + ".txt";
+                try (FileWriter fileWriter = new FileWriter(descriptionFile)) {
+                    fileWriter.write(concatenatedText.toString());
+                    System.out.println("Description of " + link + " saved to " + descriptionFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 String fileName = config.HTMLFolderPathRental+"/"+inputKeyword+"/page_"+page+"_listing_" + i + ".html";
                 try (FileWriter fileWriter = new FileWriter(fileName)) {
@@ -121,9 +145,6 @@ public class crawlRental {
                 e.printStackTrace();  // Print the full stack trace for debugging
                 break;
             }
-        }
-        if(gotLeads){
-            driver.quit();
         }
 //        System.out.println("Crawling of Rental Leads Complete Successfully!!");
         return gotLeads;

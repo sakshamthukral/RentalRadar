@@ -10,6 +10,9 @@ public class config {
     public static final String txtFolderPathLiv = "DB/parsed_liv.rent";
     public static final String txtFolderPathRental = "DB/parsed_rental.ca";
     public static final String txtFolderPathRentSeeker = "DB/parsed_rentSeeker.ca";
+    public static final String descriptionLiv="DB/description_liv.rent";
+    public static final String descriptionRental="DB/description_rental.ca";
+    public static final String descriptionRentSeeker="DB/description_rentSeeker.ca";
     public static final String lastRunTimeFilePathLiv = "logs/lastRunTimeLiv.txt";
     public static final String lastRunTimeFilePathRental = "logs/lastRunTimeRental.txt";
     public static final String lastRunTimeFilePathRentSeeker="logs/lastRunTimeRentSeeker.txt";
