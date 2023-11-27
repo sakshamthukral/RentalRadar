@@ -9,7 +9,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
-import cc.suggestions.Autocomplete.AutoComplete;
+import cc.suggestions.Autocomplete.CityAutoComplete;
 import cc.utils.helper;
 import org.apache.commons.io.FileUtils;
 import cc.utils.config;
@@ -83,10 +83,10 @@ public class Main {
                 city = sc.nextLine();
             }
             String suggestion = "";
-            AutoComplete.init();
+            CityAutoComplete.init();
             SpellCheckerRunner.init();
             if (city.length() < config.minCityLength) {
-                suggestion = AutoComplete.runAutoComplete(city);
+                suggestion = CityAutoComplete.runCityAutoComplete(city);
             }
             if (suggestion.isBlank() || city.length() >= config.minCityLength) { //TODO rethink the logic
                 System.out.println("SpellChecker suggestions:");
@@ -95,7 +95,7 @@ public class Main {
             city = suggestion;
 
             // selected the city -> displaying and incrementing search frequency
-            AutoComplete.searchFrequency(city);
+            CityAutoComplete.srchFrq(city);
         }
 
         long lastRunTime = getLastRunTime(lastRunTimeFilePath,city.toLowerCase());
