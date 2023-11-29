@@ -32,24 +32,32 @@ public class InvertIndexingRunner {
 
     // may need to work on removing symbols
     private static void addWordsTask(List<String> folders) {
-        //TODO check valid folder directory
+
         for (String parentPath : folders) {
-            String[] fileNames = FileReader.listAllFiles(parentPath);
-            for (String fileName : fileNames) {
-                indexer.addDocument(parentPath, fileName);
-                System.out.printf("DONE - %s\n", Path.of(parentPath, fileName));
+            if(!parentPath.isBlank()){
+                String[] fileNames = FileReader.listAllFiles(parentPath);
+                if(fileNames != null && fileNames.length > 0){
+                    for (String fileName : fileNames) {
+                        indexer.addDocument(parentPath, fileName);
+                        System.out.printf("DONE - %s\n", Path.of(parentPath, fileName));
+                    }
+                } else {
+                    System.out.printf("No file found in - %s\n", Path.of(parentPath));
+                    System.out.println("Do a crawling for the city first");
+                    System.out.println();
+                }
             }
         }
     }
 
     public static void main(String[] args) {
-        List<String> folders = List.of(config.txtFolderPathLiv, config.txtFolderPathRental, config.txtFolderPathRentSeeker);
+        List<String> folders = List.of(config.descriptionLiv, config.descriptionRental, config.descriptionRentSeeker);
         init(folders);
 
-        run(folders);
+        run();
     }
 
-    public static void run(List<String> folders) {
+    public static void run() {
         boolean sessionFlag = true;
         int menuUserInput;
         while (sessionFlag) {
@@ -57,7 +65,6 @@ public class InvertIndexingRunner {
 
             switch (menuUserInput) {
                 case 1 -> searchDocument();
-                case 2 -> init(folders);
                 default -> sessionFlag = false;
             }
         }
@@ -76,7 +83,16 @@ public class InvertIndexingRunner {
             input = sc.next();
         }
 
-        return Integer.parseInt(input);
+        int exit = 2;
+
+        try{
+            return Integer.parseInt(input);
+        }catch (NumberFormatException e){
+            System.out.println("Number parsing error; Returning to main menu");
+            return exit;
+        }
+
+
     }
 
     // Search for documents containing a word

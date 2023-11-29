@@ -16,14 +16,13 @@ public class config {
     public static final String lastRunTimeFilePathLiv = "logs/lastRunTimeLiv.txt";
     public static final String lastRunTimeFilePathRental = "logs/lastRunTimeRental.txt";
     public static final String lastRunTimeFilePathRentSeeker="logs/lastRunTimeRentSeeker.txt";
-    // driver is in the /lib folder; unzip
 
-    // public static final String chromeDriverPath = "chromedriver-win64/chromedriver.exe"; // Path of chromedriver.exe
-    public static final String chromeDriverPath = "C:/Users/aniru/Downloads/acc_assignment_3/chromedriver-win64/chromedriver-win64/chromedriver.exe";
-    public static final String chromeBrowserPath = "C:/Program Files/Google/Chrome/Application/chrome.exe";
-    // public static final String chromeBrowserPath = "chrome-win64/chrome.exe"; // Path of chrome.exe
-    // public static final String stopwordsFilePath = "stopwords.txt"; // Path to stopwords file
-    public static final String stopwordsFilePath = "D:/ACC3/compute-champions/stopwords.txt";
+    // driver is in the /lib folder; unzip
+     public static final String chromeDriverPath = "lib/chromedriver.exe"; // Path of chromedriver.exe
+//    // public static final String chromeBrowserPath = "chrome-win64/chrome.exe"; // Path of chrome.exe
+     public static final String stopwordsFilePath = "stopwords.txt"; // Path to stopwords file -> file is at the root of the project
+     public static final String searchFrequencyFilePath = "searchFrequencies.txt"; //give full path of searchFrequencies.txt
+     public static final String cityNamesFilePath="CityNames.txt"; // give full path of CityNames.txt
 
     public static final String[] cities = {"Toronto", "Montreal", "Calgary", "Ottawa", "Edmonton", "Winnipeg",
                 "Vancouver", "Brampton", "Hamilton", "Surrey", "Quebec", "Halifax", "Laval",
@@ -48,11 +47,8 @@ public class config {
             "moncton", "drummondville", "caledon", "airdrie", "sarnia", "granby", "fredericton",
             "aurora", "mirabel", "blainville", "welland", "belleville");
 
-    // public static final String searchFrequencyFilePath = "searchFrequencies.txt"; //give full path of searchFrequencies.txt
-    public static final String searchFrequencyFilePath = "D:/ACC3/compute-champions/searchFrequencies.txt"; 
     public static final String cityRegex = "^[a-zA-Z]+$";
     public static final String linkRegex = "(https?://[a-zA-Z0-9./-]+)";
     public static final int minCityLength = 15;
-    // public static final String cityNamesFilePath="CityNames.txt"; // give full path of CityNames.txt
-    public static final String cityNamesFilePath="D:/ACC3/compute-champions/CityNames.txt";
+
 }

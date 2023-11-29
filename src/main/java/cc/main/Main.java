@@ -13,11 +13,13 @@ import cc.suggestions.Autocomplete.CityAutoComplete;
 import cc.utils.helper;
 import org.apache.commons.io.FileUtils;
 import cc.utils.config;
+
 public class Main {
     public static String globCity = "";
     public static int globWebsiteCode;
     public static String HTMLFolderPath;
     public static String txtFolderPath;
+    public static String descriptionFolderPath;
     public static String lastRunTimeFilePath;
 
 
@@ -32,7 +34,7 @@ public class Main {
             long currentTime = System.currentTimeMillis();
             writer.println(cityName + ":" + currentTime);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Could not save the last run time");
         }
     }
 
@@ -51,6 +53,7 @@ public class Main {
             }
             return cityTimestamps.getOrDefault(cityName, 0L);
         } catch (IOException | NumberFormatException e) {
+            System.out.println("Could not determine the last run time");
             return 0;
         }
     }
@@ -61,16 +64,19 @@ public class Main {
                 HTMLFolderPath=config.HTMLFolderPathLiv;
                 txtFolderPath=config.txtFolderPathLiv;
                 lastRunTimeFilePath=config.lastRunTimeFilePathLiv;
+                descriptionFolderPath=config.descriptionLiv;
             }
             case 2 ->{
                 HTMLFolderPath=config.HTMLFolderPathRental;
                 txtFolderPath=config.txtFolderPathRental;
                 lastRunTimeFilePath=config.lastRunTimeFilePathRental;
+                descriptionFolderPath=config.descriptionRental;
             }
             case 3 ->{
                 HTMLFolderPath=config.HTMLFolderPathRentSeeker;
                 txtFolderPath=config.txtFolderPathRentSeeker;
                 lastRunTimeFilePath=config.lastRunTimeFilePathRentSeeker;
+                descriptionFolderPath=config.descriptionRentSeeker;
             }
         }
     }
@@ -120,7 +126,7 @@ public class Main {
                 FileUtils.deleteDirectory(new File(htmlCityFolder));
                 FileUtils.deleteDirectory(new File(txtCityFolder));
             } catch(Exception e){
-                System.out.println(e);
+//                System.out.println(e);
                 System.out.println("We have faced some issue while crawling. Please try again");
             }
             helper.createFolderIfNotExists(htmlCityFolder);
@@ -182,13 +188,20 @@ public class Main {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println(txtFolderPath);
+                System.out.println(descriptionFolderPath);
                 System.out.println(cityName);
 
                 // invertedIndex -> FrequencyCount -> PageRanking
-                List<String> folders = List.of(Path.of(txtFolderPath, cityName).toString());
+                List<String> folders = List.of(Path.of(descriptionFolderPath, cityName).toString());
                 InvertIndexingRunner.init(folders);
-                InvertIndexingRunner.run(folders);
+                InvertIndexingRunner.run();
+
+                //TODO tasks
+                //add email
+                //add phone
+                //add price (in understandable way)
+                //add url
+                //add comparison
             }
             if(webOption == 2){
                 break;

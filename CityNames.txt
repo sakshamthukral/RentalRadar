@@ -1,139 +1,139 @@
 Calgary
 Edmonton
- Red Deer
- Lethbridge
- St. Albert
+Red Deer
+Lethbridge
+St. Albert
 Medicine Hat
- Grande Prairie
- Airdrie
- Spruce Grove
- Leduc
+Grande Prairie
+Airdrie
+Spruce Grove
+Leduc
 Fort Saskatchewan
- Chestermere
- Lloydminster
- Camrose
- Beaumont
+Chestermere
+Lloydminster
+Camrose
+Beaumont
 Vancouver
- Victoria
- Kelowna
- Abbotsford
- Kamloops
+Victoria
+Kelowna
+Abbotsford
+Kamloops
 Nanaimo
- Chilliwack
- Surrey
- Burnaby
- Richmond
+Chilliwack
+Surrey
+Burnaby
+Richmond
 Langley
- Coquitlam
- Saanich
- Maple Ridge
- New Westminster
+Coquitlam
+Saanich
+Maple Ridge
+New Westminster
 Winnipeg
- Brandon
- Steinbach
- Thompson
- Portage la Prairie
- Winkler
- Selkirk
- Dauphin
- Morden
- The Pas
+Brandon
+Steinbach
+Thompson
+Portage la Prairie
+Winkler
+Selkirk
+Dauphin
+Morden
+The Pas
 Fredericton
- Moncton
- Saint John
- Miramichi
- Edmundston
+Moncton
+Saint John
+Miramichi
+Edmundston
 Bathurst
- Campbellton
- Dieppe
- Oromocto
- Shediac
+Campbellton
+Dieppe
+Oromocto
+Shediac
 St. John's
- Corner Brook
- Mount Pearl
- Paradise
- Grand Falls-Windsor
+Corner Brook
+Mount Pearl
+Paradise
+Grand Falls-Windsor
 Gander
- Happy Valley-Goose Bay
- Labrador City
- Stephenville
- Carbonear
+Happy Valley-Goose Bay
+Labrador City
+Stephenville
+Carbonear
 Halifax
- Sydney
- Dartmouth
- Truro
- New Glasgow
+Sydney
+Dartmouth
+Truro
+New Glasgow
 Glace Bay
- Kentville
- Amherst
- Bridgewater
- Yarmouth
+Kentville
+Amherst
+Bridgewater
+Yarmouth
 Toronto
- Ottawa
- Mississauga
- Brampton
- Hamilton
+Ottawa
+Mississauga
+Brampton
+Hamilton
 London
- Markham
- Vaughan
- Kitchener
- Windsor
+Markham
+Vaughan
+Kitchener
+Windsor
 Richmond Hill
- Oakville
- Burlington
- Greater Sudbury
- Oshawa
+Oakville
+Burlington
+Greater Sudbury
+Oshawa
 Barrie
- St. Catharines
- Guelph
- Cambridge
- Kingston
+St. Catharines
+Guelph
+Cambridge
+Kingston
 Thunder Bay
- Waterloo
- Brantford
- Ajax
- Pickering
+Waterloo
+Brantford
+Ajax
+Pickering
 Charlottetown
- Summerside
- Stratford
- Cornwall
- Montague
+Summerside
+Stratford
+Cornwall
+Montague
 Montreal
- Quebec City
- Laval
- Gatineau
- Longueuil
+Quebec City
+Laval
+Gatineau
+Longueuil
 Sherbrooke
- Saguenay
- Levis
- Trois-Rivieres
- Terrebonne
+Saguenay
+Levis
+Trois-Rivieres
+Terrebonne
 Saint-Jean-sur-Richelieu
- Brossard
- Repentigny
- Drummondville
- Saint-Jerome
+Brossard
+Repentigny
+Drummondville
+Saint-Jerome
 Granby
- Blainville
- Saint-Hyacinthe
- Dollard-Des Ormeaux
- Rimouski
+Blainville
+Saint-Hyacinthe
+Dollard-Des Ormeaux
+Rimouski
 Regina
- Saskatoon
- Prince Albert
- Moose Jaw
- Swift Current
+Saskatoon
+Prince Albert
+Moose Jaw
+Swift Current
 Yorkton
- North Battleford
- Estevan
- Martensville
- Warman
+North Battleford
+Estevan
+Martensville
+Warman
 Yellowknife
- Hay River
- Inuvik
+Hay River
+Inuvik
 Iqaluit
- Rankin Inlet
- Arviat
+Rankin Inlet
+Arviat
 Whitehorse
- Dawson City
- Watson Lake
+Dawson City
+Watson Lake

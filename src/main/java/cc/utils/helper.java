@@ -3,14 +3,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import cc.utils.config;
 
 import java.io.File;
 import java.time.Duration;
 
 public class helper {
-//    public static final String chromeDriverPath = config.chromeDriverPath;
-    public static final String chromeBrowserPath = config.chromeBrowserPath;
 
     public static Object[] createChromeDriverWithWait(){
         System.setProperty("webdriver.chrome.driver", config.chromeDriverPath);
