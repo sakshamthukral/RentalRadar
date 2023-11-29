@@ -32,6 +32,8 @@ public class PatternFinder {
     private static Set<String> findInFile (String filename, List<String> regexPattern) {
         File file = new File(filename);
         Set<String> results = new HashSet<>();
+        String listingUrl = "";
+
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -43,21 +45,41 @@ public class PatternFinder {
                         results.add(matcher.group());
                     }
                 }
+                listingUrl = findListingUrl(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        printPatternResults(filename, results);
+        printPatternResults(filename, results, listingUrl);
 
         return results;
     }
 
-    private static void printPatternResults (String filename, Set<String> results) {
+    private static String findListingUrl (String line) {
+        String url = "";
+
+        String regex = "<(https?://\\S+)>";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher urlMatcher =  pattern.matcher(line);
+
+        while (urlMatcher.find()) {
+            url = (urlMatcher.group());
+        }
+
+        return url;
+    }
+
+    private static void printPatternResults (String filename, Set<String> results, String listingUrl) {
         if (results.isEmpty()) {
             return;
         }
         System.out.println(filename + ":");
+
+        if (!listingUrl.isEmpty()) {
+            System.out.println("\t( Listing URL: " + listingUrl + " )");
+        }
 
         int serialNumber = 1;
         for (String result : results) {
@@ -108,7 +130,7 @@ public class PatternFinder {
         System.out.println("Enter 3 : To find Currency Amounts");
         System.out.println("Enter 4 : To find URLs");
         System.out.println("Enter 5 : To find Dates");
-        System.out.println("Enter 6 : To Return to main menu");
+        System.out.println("Enter 6 : To Return to previous menu");
 
         String input = sc.next();
 
