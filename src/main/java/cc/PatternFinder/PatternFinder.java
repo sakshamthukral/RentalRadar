@@ -92,7 +92,7 @@ public class PatternFinder {
     }
 
     public static void run (List<String> filenames) {
-        System.out.println("\nFind patterns in the ranked pages:\n");
+        System.out.println("\nFind patterns in the ranked pages:");
         boolean sessionFlag = true;
         int menuUserInput;
         while (sessionFlag) {

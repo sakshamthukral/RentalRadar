@@ -22,7 +22,6 @@ public class Main {
     public static String descriptionFolderPath;
     public static String lastRunTimeFilePath;
 
-
     public static void changeWebsitePaths(String htmlCityFolder, String txtCityFolder) throws IOException {
         FileUtils.deleteDirectory(new File(htmlCityFolder));
         FileUtils.deleteDirectory(new File(txtCityFolder));
@@ -106,6 +105,10 @@ public class Main {
 
         long lastRunTime = getLastRunTime(lastRunTimeFilePath,city.toLowerCase());
         System.out.println("Last run time for " + city + ": " + (lastRunTime > 0 ? new Date(lastRunTime) : "N/A"));
+        System.out.println();
+
+        // TODO add func to go back to the CITY input screen
+
         System.out.print("Do you want to rerun the program? (y/n): ");
         String rerunChoice = sc.nextLine().toLowerCase();
         if ("y".equals(rerunChoice)) {

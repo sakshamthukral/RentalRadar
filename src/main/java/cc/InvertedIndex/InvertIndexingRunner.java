@@ -75,6 +75,7 @@ public class InvertIndexingRunner {
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter 1 : To search for words in the crawled documents");
         System.out.println("Enter 2 : To Return to main menu");
+        // TODO rename to change city prompt?
 
         String input = sc.next();
 
@@ -91,51 +92,83 @@ public class InvertIndexingRunner {
             System.out.println("Number parsing error; Returning to main menu");
             return exit;
         }
-
-
     }
 
     // Search for documents containing a word
     private static void searchDocument() {
-        String query = queryTakeUserInput();
-        Set<String> result = indexer.search(query);
+        boolean repeat = true;
+        List<WordFrequency> wordFrequencyList = new ArrayList<>();
 
-        if (result.isEmpty()) {
-            System.out.printf("No documents found containing the query \"%s\"\n", query);
-            System.out.println("Try again with another search query");
-        } else {
-            System.out.printf("Documents containing the query \"%s\" : \n", query);
-            System.out.printf("%s \n", String.join("\n", result));
-            System.out.println();
+        while (repeat) {
+            String query = queryTakeUserInput();
+            Set<String> result = indexer.search(query);
 
-            // showing frequency count
-            System.out.println("Frequency Counting . . .");
+            //TODO do a intersection between files for multiple word search
 
-            String[] words = query.split(" ");
-            String[] documents = result.toArray(new String[]{});
-            List<WordFrequency> wordFrequencyList = FrequencyCount.getMultipleWordsFrequencyCount(documents, words);
-
-            for (WordFrequency wf : wordFrequencyList) {
-                System.out.printf("%s - word frequencies :\n", wf.filename);
-                for (String key : wf.wordsCount.keySet()) {
-                    System.out.printf("%s - %s\n", key, wf.wordsCount.get(key));
-                }
+            if (result.isEmpty()) {
+                System.out.printf("No documents found containing the query \"%s\"\n", query);
+                System.out.println("Try again with another search query");
+            } else {
+                System.out.printf("Documents containing the query \"%s\" : \n", query);
+                System.out.printf("%s \n", String.join("\n", result));
                 System.out.println();
+
+                // showing frequency count
+                System.out.println("Frequency Counting . . .");
+
+                String[] words = query.split(" ");
+                String[] documents = result.toArray(new String[]{});
+                wordFrequencyList = FrequencyCount.getMultipleWordsFrequencyCount(documents, words);
+
+                for (WordFrequency wf : wordFrequencyList) {
+                    System.out.printf("%s - word frequencies :\n", wf.filename);
+                    //TODO a table like freq count?
+                    for (String key : wf.wordsCount.keySet()) {
+                        System.out.printf("%s - %s\n", key, wf.wordsCount.get(key));
+                    }
+                    System.out.println();
+                }
+
+                // PageRanking
+                PageScore[] sortedPages = PageRanking.rank(wordFrequencyList);
+
+                int repeatInput = menuTakeUserInputToForward();
+
+                if(repeatInput == 1)
+                    repeat = false;
             }
-
-            // PageRanking
-            PageScore[] sortedPages = PageRanking.rank(wordFrequencyList);
-
-            // TODO PatternFinding
-            List<String> filenames = new ArrayList<>();
-            for (WordFrequency wf : wordFrequencyList) {
-                filenames.add(wf.filename);
-            }
-
-            PatternFinder.run(filenames);
-
         }
+
+        List<String> filenames = new ArrayList<>();
+        for (WordFrequency wf : wordFrequencyList) {
+            filenames.add(wf.filename);
+        }
+
+        PatternFinder.run(filenames);
         System.out.println();
+    }
+
+    // take menu item input from user as integer
+    private static int menuTakeUserInputToForward() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter 1 : To find pattern in the files");
+        System.out.println("Enter 2 : To search for a different query");
+
+        String input = sc.next();
+
+        while (!input.matches("[0-9]")) {
+            System.out.println("Please enter a valid input");
+            input = sc.next();
+        }
+
+        int exit = 2;
+
+        try{
+            return Integer.parseInt(input);
+        }catch (NumberFormatException e){
+            System.out.println("Number parsing error");
+            return exit;
+        }
     }
 
     // Take valid word input from user

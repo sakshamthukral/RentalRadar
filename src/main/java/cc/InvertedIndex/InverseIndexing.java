@@ -49,6 +49,8 @@ public class InverseIndexing {
         String[] queryWords = query.split("\\s+");
         Set<String> result = new HashSet<>();
 
+        // TODO intersect the query results
+
         for (String queryWord : queryWords) {
             queryWord = queryWord.toLowerCase();
             if (root != null) {
