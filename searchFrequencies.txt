@@ -63,7 +63,7 @@ strathcona 1
 sudbury 1
 surrey 1
 terrebonne 1
-toronto 18
+toronto 19
 vancouver 3
 vaughan 1
 victoria 3

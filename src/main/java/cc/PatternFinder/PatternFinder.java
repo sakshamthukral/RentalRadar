@@ -12,31 +12,6 @@ public class PatternFinder {
     public static List<String> urlPattern = List.of("https?://\\S+");
     public static List<String> datePattern = List.of("\\d{1,2}/\\d{1,2}/\\d{2,4}", "\\d{1,2}-\\d{1,2}-\\d{2,4}", "\\d{4}/\\d{1,2}/\\d{1,2}", "\\d{4}-\\d{1,2}-\\d{1,2}", "\\d{4}-\\d{2}-\\d{2}", "\\d{1,2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\\d{4}");
 
-    private static List<File> getAllFiles(File folder) {
-
-        List<File> files = new ArrayList<>();
-
-        for (File directory : Objects.requireNonNull(folder.listFiles())) {
-            if (directory.isDirectory()) {
-                files.addAll(Arrays.asList(Objects.requireNonNull(directory.listFiles())));
-            }
-        }
-
-        // Return the list of all the files in the folder
-        return files;
-    }
-
-    private static Set<String> findInFiles (String[] filenames, List<String> regexPattern) {
-
-        Set<String> results = new HashSet<>();
-
-        for (String filename : filenames) {
-            Set<String> currentFileResult = findInFile(filename, regexPattern);
-            results.addAll(currentFileResult);
-        }
-
-        return results;
-    }
 
     private static Set<String> findInFiles (List<String> filenames, List<String> regexPattern) {
 
