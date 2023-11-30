@@ -105,6 +105,7 @@ public class crawlRental {
                 for (WebElement child : childElements) {
                     concatenatedText.append(child.getText()).append("\n");
                 }
+                concatenatedText.append("\n<<<").append(link).append(">>>");
 
 //                String descriptionText = description.getText();
 //

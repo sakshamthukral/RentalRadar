@@ -70,5 +70,10 @@ victoria 3
 waterloo 1
 welland 1
 whitby 1
+<<<<<<< HEAD
+windsor 17
+winnipeg 1
+=======
 windsor 29
 winnipeg 4
+>>>>>>> 770e4e9edb159d9f619ad5aaa79973524613a830
