@@ -47,21 +47,25 @@ public class InverseIndexing {
 
     public Set<String> search(String query) {
         String[] queryWords = query.split("\\s+");
-        Set<String> result = new HashSet<>();
-
-        // TODO intersect the query results
+        Set<String> result = null;
 
         for (String queryWord : queryWords) {
             queryWord = queryWord.toLowerCase();
             if (root != null) {
                 TernaryNode node = search(root, queryWord.toCharArray(), 0);
                 if (node != null) {
-                    result.addAll(node.documents);
+                    if (result == null) {
+                        // Initialize intersection with the first set of documents
+                        result = new HashSet<>(node.documents);
+                    } else {
+                        // keep all the document that are on the passed Set
+                        result.retainAll(node.documents);
+                    }
                 }
             }
         }
 
-        return result;
+        return result != null ? result : Collections.emptySet();
     }
 
     private TernaryNode search(TernaryNode node, char[] word, int index) {
