@@ -1,7 +1,5 @@
 package cc.PatternFinder;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -49,6 +47,7 @@ public class PatternFinder {
             System.out.println("Error reading the file " + file.getName() + ". Make sure that the file path is correct.");;
         }
 
+        listingUrl = listingUrl.replaceAll("<", "").replaceAll(">", "");
         return new MatchResult(filename, listingUrl, results);
     }
 
@@ -65,6 +64,24 @@ public class PatternFinder {
         }
 
         return url;
+    }
+
+    public static String findListingUrlInFile(String filename) {
+        File file = new File(filename);
+        String listingUrl = "";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                listingUrl = findListingUrl(line);
+            }
+        } catch (IOException e) {
+            System.out.println("File read error");
+        }
+
+        listingUrl = listingUrl.replaceAll("<", "").replaceAll(">", "");
+
+        return listingUrl;
     }
 
     private static void displayPatterns (List<MatchResult> matchResults) {
