@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class crawlLiv {
     public static final String WEBSITE="https://liv.rent/";
@@ -45,8 +46,7 @@ public class crawlLiv {
 
         driver.findElement(By.cssSelector("button.sc-9b749994-8.lhKUEI")).click(); // Clicking on Allowing cookies when pop-up comes
         switch (inputKeyword) {
-            case "Toronto", "toronto" ->
-                    driver.findElement(By.cssSelector("div.sc-ece85b1a-0.hHScca")).click(); // For searching rentals in Toronto
+            case "Toronto", "toronto" ->  driver.get("https://liv.rent/rental-listings/city/toronto");
             case "Windsor", "windsor" -> driver.get("https://liv.rent/rental-listings/city/windsor-on");
             case "Winnipeg", "winnipeg" -> driver.get("https://liv.rent/rental-listings/city/winnipeg");
         }
@@ -61,18 +61,27 @@ public class crawlLiv {
             System.out.println(currentPageUrl);
 
             List<String> links = new ArrayList<>();
-            List<WebElement> leads;
+            List<String> leadUrlList;
             try {
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.sc-e20004cf-0.cgdhUn"))); // Waiting for the next page to appear
-                leads = driver.findElements(By.cssSelector("a.sc-e20004cf-0.cgdhUn")); // Getting links to all the leads visible on Page-1
+                leadUrlList = driver
+                        .findElements(By.cssSelector("a[href*='/rental-listings/detail/']"))
+                        .stream()
+                        .map(webElement -> webElement.getAttribute("href"))
+                        .filter(url -> url.contains(inputKeyword))
+                        .collect(Collectors.toList());
+
+                if(leadUrlList == null || leadUrlList.isEmpty()){
+                    System.out.println("Additional page not found!!");
+                    gotLeads=false;
+                    break;
+                }
             } catch (TimeoutException e) {
-                System.err.println("Leads not found!!");
+                System.out.println("Additional page not found!!");
                 gotLeads=false;
                 break;
             }
 
-            for(WebElement lead: leads){
-                String link = lead.getAttribute("href");
+            for(String link: leadUrlList){
                 Pattern pattern = Pattern.compile(config.linkRegex);
                 Matcher matcher = pattern.matcher(link);
                 if(matcher.matches()){
@@ -85,24 +94,38 @@ public class crawlLiv {
                 driver.get(link);
                 String htmlContent = driver.getPageSource();
                 threadWait(8000);
+                WebElement descriptionSection = null;
                 try {
-                    WebElement readMoreBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("p.sc-d2c88f17-0.sc-d2c88f17-1.iybCNV.inA-dsu")));
-                    readMoreBtn.click();
-                } catch (NoSuchElementException e) {
-                    // Handle the case when "Read More" button is not found
-                    System.out.println("Read More button not found. Skipping...");
-                } catch (TimeoutException e) {
+                    WebElement descriptionParent = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#Overview +* +* +*")));
+                    List<WebElement> pS = descriptionParent.findElements(By.cssSelector("p"));
+
+                    if(!pS.isEmpty()){
+                        if(pS.size() > 1 && pS.get(1).isDisplayed()){
+                            pS.get(1).click();
+                            System.out.println("Simulating Click on 'Read More'");
+                        }
+
+                        descriptionSection = pS.get(0);
+                    }
+                } catch (NoSuchElementException | TimeoutException e) {
                     System.out.println("Read More button not found. Skipping...");
                 } catch (Exception e) {
                     System.out.println("Read More button not found. Skipping...");
                 }
                 threadWait(5000);
-                WebElement description = driver.findElement(By.cssSelector("p.sc-d2c88f17-0.iybCNV"));
-                String descriptionText = description.getText();
+                String descriptionText = "";
+                String overviewText = driver.findElement(By.cssSelector("#Overview")).getText();
+
+//                WebElement description = driver.findElement(By.cssSelector("p.sc-d2c88f17-0.iybCNV"));
+                if(descriptionSection != null)
+                    descriptionText = descriptionSection.getText();
+
                 descriptionText = descriptionText+"\n<<<"+link+">>>";
 
                 String descriptionFile = config.descriptionLiv+"/"+inputKeyword +"/page_"+page+"_listing_" + i + ".txt";
                 try (FileWriter fileWriter = new FileWriter(descriptionFile)) {
+                    fileWriter.write(overviewText); // adding overview text
+                    fileWriter.write("\n");
                     fileWriter.write(descriptionText);
                     System.out.println("Description of " + link + " saved to " + descriptionFile);
                 } catch (IOException e) {
