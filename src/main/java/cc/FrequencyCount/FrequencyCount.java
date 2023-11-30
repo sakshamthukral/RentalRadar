@@ -5,6 +5,9 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class FrequencyCount {
+    // Define a pattern to split the file content based on punctuations, spaces and tabs
+    public static final Pattern SPLIT_PATTERN = Pattern.compile("[\\s\\p{Punct}]+");
+    // TODO split using space and remove all punc FileReader.WORD_WITHOUT_SPACE
 
     public static List<WordFrequency> getMultipleWordsFrequencyCount(String[] filenames, String[] searchWords) {
         List<WordFrequency> fileWordFrequencies = new ArrayList<>();
@@ -25,16 +28,16 @@ public class FrequencyCount {
     public static Map<String, Integer> createWordFrequencyMap(File file, String[] searchWords) {
         Map<String, Integer> wordMap = new HashMap<>();
 
-        // Define a pattern to split the file content based on punctuations, spaces and tabs
-        Pattern splitPattern = Pattern.compile("[\\s\\p{Punct}]+");
-        // TODO split using space and remove all punc FileReader.WORD_WITHOUT_SPACE
+        for (String searchWord : searchWords) {
+            wordMap.put(searchWord, 0);
+        }
 
         try (BufferedReader bufferReader = new BufferedReader(new FileReader(file))) {
             String currentLine;
             while ((currentLine = bufferReader.readLine()) != null) {
                 // Convert the entire line to lower case for accurate frequency count
                 String lowerCaseLine = currentLine.toLowerCase();
-                String[] words = splitPattern.split(lowerCaseLine);
+                String[] words = SPLIT_PATTERN.split(lowerCaseLine);
 
                 for (String word : words) {
                     word = word.trim();
@@ -48,23 +51,14 @@ public class FrequencyCount {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Error reading the file " + file.getName() + ". Make sure that the file path is correct.");
         }
 
         return wordMap;
 
     }
 
-    public static void main (String[] args) {
-        String[] filenames = {"storage/txt/common/doc1.txt", "storage/txt/common/doc2.txt", "storage/txt/common/doc3.txt"};
-        String[] searchWords = {"document", "sample"};
-
-        List<WordFrequency> wordFrequencies = getMultipleWordsFrequencyCount(filenames, searchWords );
-
-        for (WordFrequency wordFrequency : wordFrequencies) {
-
-            System.out.println(wordFrequency.filename + " -> " + wordFrequency.wordsCount);
-        }
-
-    }
 }
+
+
+
