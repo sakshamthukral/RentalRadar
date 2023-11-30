@@ -1,35 +1,33 @@
 package cc.PatternFinder;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PatternFinder {
-    public static List<String> emailPattern = List.of("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b");
-    public static List<String> phoneNoPattern = List.of( "\\d{3}-\\d{7}", "\\(\\d{3}\\)\\s\\d{3}-\\d{4}", "\\+1\\s\\(\\d{3}\\)\\s\\d{3}-\\d{4}", "\\+1\\s\\(\\d{3}\\)\\s\\d{3}-\\d{4}");
-    public static List<String> currencyAmountPattern = List.of("\\$[0-9,]+(?:\\.[0-9]{2})?");
-    public static List<String> urlPattern = List.of("https?://\\S+");
-    public static List<String> datePattern = List.of("\\d{1,2}/\\d{1,2}/\\d{2,4}", "\\d{1,2}-\\d{1,2}-\\d{2,4}", "\\d{4}/\\d{1,2}/\\d{1,2}", "\\d{4}-\\d{1,2}-\\d{1,2}", "\\d{4}-\\d{2}-\\d{2}", "\\d{1,2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\\d{4}");
+    public static final List<String> EMAIL_REGEX = List.of("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b");
+    public static final List<String> PHONE_REGEX = List.of( "\\d{3}-\\d{7}", "\\(\\d{3}\\)\\s\\d{3}-\\d{4}", "\\+1\\s\\(\\d{3}\\)\\s\\d{3}-\\d{4}", "\\+1\\s\\(\\d{3}\\)\\s\\d{3}-\\d{4}");
+    public static final List<String> CURRENCY_REGEX = List.of("\\$[0-9,]+(?:\\.[0-9]{2})?");
+    public static final List<String> URL_REGEX = List.of("https?://\\S+");
+    public static final List<String> DATE_REGEX = List.of("\\d{1,2}/\\d{1,2}/\\d{2,4}", "\\d{1,2}-\\d{1,2}-\\d{2,4}", "\\d{4}/\\d{1,2}/\\d{1,2}", "\\d{4}-\\d{1,2}-\\d{1,2}", "\\d{4}-\\d{2}-\\d{2}", "\\d{1,2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\\d{4}");
 
 
-    private static Set<String> findInFiles (List<String> filenames, List<String> regexPattern) {
+    private static List<MatchResult> findInFiles (List<String> filenames, List<String> regexPattern) {
 
-        Set<String> results = new HashSet<>();
+        List<MatchResult> matchResults = new ArrayList<>();
 
         for (String filename : filenames) {
-            Set<String> currentFileResult = findInFile(filename, regexPattern);
-            results.addAll(currentFileResult);
+            MatchResult currentFileResult = findInFile(filename, regexPattern);
+            matchResults.add(currentFileResult);
         }
 
-        if (results.isEmpty()) {
-            System.out.println("No results found.");
-        }
-
-        return results;
+        return matchResults;
     }
 
-    private static Set<String> findInFile (String filename, List<String> regexPattern) {
+    private static MatchResult findInFile (String filename, List<String> regexPattern) {
         File file = new File(filename);
         Set<String> results = new HashSet<>();
         String listingUrl = "";
@@ -48,18 +46,16 @@ public class PatternFinder {
                 listingUrl = findListingUrl(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error reading the file " + file.getName() + ". Make sure that the file path is correct.");;
         }
 
-        printPatternResults(filename, results, listingUrl);
-
-        return results;
+        return new MatchResult(filename, listingUrl, results);
     }
 
     private static String findListingUrl (String line) {
         String url = "";
 
-        String regex = "<(https?://\\S+)>";
+        String regex = "<<<(https?://\\S+)>>>";
 
         Pattern pattern = Pattern.compile(regex);
         Matcher urlMatcher =  pattern.matcher(line);
@@ -71,20 +67,31 @@ public class PatternFinder {
         return url;
     }
 
-    private static void printPatternResults (String filename, Set<String> results, String listingUrl) {
-        if (results.isEmpty()) {
-            return;
-        }
-        System.out.println(filename + ":");
+    private static void displayPatterns (List<MatchResult> matchResults) {
 
-        if (!listingUrl.isEmpty()) {
-            System.out.println("\t( Listing URL: " + listingUrl + " )");
+        boolean noMatchesFound = true;
+
+        for (MatchResult response : matchResults) {
+            if (!response.results.isEmpty()) {
+                noMatchesFound = false;
+                System.out.println(response.filename + ":");
+
+                if (response.listingUrl.isEmpty()) {
+                    System.out.println("\t( Listing URL: " + " <Not found> )");
+                } else {
+                    System.out.println("\t( Listing URL: " + response.listingUrl + " )");
+                }
+
+                int serialNumber = 1;
+                for (String result : response.results) {
+                    System.out.println("\t" + serialNumber + ". " + result);
+                    serialNumber++;
+                }
+            }
         }
 
-        int serialNumber = 1;
-        for (String result : results) {
-            System.out.println("\t" + serialNumber + ". " + result);
-            serialNumber++;
+        if (noMatchesFound) {
+            System.out.println("No matches found");
         }
     }
 
@@ -95,29 +102,36 @@ public class PatternFinder {
         while (sessionFlag) {
             menuUserInput = menuTakeUserInput();
 
+            List<MatchResult> matchResults = new ArrayList<>();
+
+            System.out.println();
+
             switch (menuUserInput) {
                 case 1 -> {
                     System.out.println("Finding Emails...");
-                    findInFiles(filenames, emailPattern);
+                    matchResults = findInFiles(filenames, EMAIL_REGEX);
                 }
                 case 2 -> {
                     System.out.println("Finding Phone numbers...");
-                    findInFiles(filenames, phoneNoPattern);
+                    matchResults = findInFiles(filenames, PHONE_REGEX);
                 }
                 case 3 -> {
                     System.out.println("Finding Currency Amounts...");
-                    findInFiles(filenames, currencyAmountPattern);
+                    matchResults = findInFiles(filenames, CURRENCY_REGEX);
                 }
                 case 4 -> {
                     System.out.println("Finding URLs...");
-                    findInFiles(filenames, urlPattern);
+                    matchResults = findInFiles(filenames, URL_REGEX);
                 }
                 case 5 -> {
                     System.out.println("Finding Dates...");
-                    findInFiles(filenames, datePattern);
+                    matchResults = findInFiles(filenames, DATE_REGEX);
                 }
                 default -> sessionFlag = false;
             }
+
+            if (sessionFlag)
+                displayPatterns(matchResults);
         }
 
     }
@@ -140,12 +154,5 @@ public class PatternFinder {
         }
 
         return Integer.parseInt(input);
-    }
-
-    public static void main(String[] args) {
-
-        List<String> filenames = List.of("DB/parsed_liv.rent/windsor/page_1_listing_4.txt", "DB/parsed_liv.rent/windsor/page_1_listing_3.txt", "DB/parsed_liv.rent/windsor/page_1_listing_1.txt", "DB/parsed_liv.rent/windsor/page_1_listing_2.txt");
-
-        run(filenames);
     }
 }
