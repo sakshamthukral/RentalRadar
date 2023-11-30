@@ -84,7 +84,7 @@ public class Main {
         String city = sc.nextLine();
         while(!config.CITIES.contains(city)) {
             while (city.isBlank() || (!city.matches(config.cityRegex))) {
-                System.out.print("Invalid City please renter the city: ");
+                System.out.print("Invalid City. Please re-enter the city: ");
                 city = sc.nextLine();
             }
             String suggestion = "";
@@ -94,13 +94,14 @@ public class Main {
                 suggestion = CityAutoComplete.runCityAutoComplete(city);
             }
             if (suggestion.isBlank() || city.length() >= config.minCityLength) { //TODO rethink the logic
-                System.out.println("SpellChecker suggestions:");
                 suggestion = SpellCheckerRunner.spellCheckAndSelectCity(city);
             }
             city = suggestion;
 
             // selected the city -> displaying and incrementing search frequency
-            CityAutoComplete.srchFrq(city);
+            if(!city.isBlank()) {
+                CityAutoComplete.srchFrq(city);
+            }
         }
 
         long lastRunTime = getLastRunTime(lastRunTimeFilePath,city.toLowerCase());
@@ -173,47 +174,80 @@ public class Main {
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
         while (true){
-            System.out.println("Enter-1: To run web crawling and parsing!");
-            System.out.println("Enter-2: To Exit!");
-            int webOption = sc.nextInt();
+            int webOption = 0;
+
+            boolean isMenuSelected1 = false;
+            while (!isMenuSelected1){
+                System.out.println("Enter-1: To run web crawling and parsing!");
+                System.out.println("Enter-2: To Exit!");
+
+                try {
+                    webOption = sc.nextInt();
+                    isMenuSelected1 = true;
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input. Try again!");
+                    sc.nextLine(); // Consume the invalid input
+                }
+            }
+
+
+
             if (webOption == 1){
-                System.out.println("Enter 1 : To checkout rental leads from liv.rent");
-                System.out.println("Enter 2 : To checkout rental leads from rentals.ca");
-                System.out.println("Enter 3 : To checkout rental leads from rentseeker.ca");
-                globWebsiteCode = sc.nextInt();
-                sc.nextLine();
+                int input = 0;
+                boolean isMenuSelected2 = false;
+                while (!isMenuSelected2){
+                    System.out.println("Enter 1 : To checkout rental leads from liv.rent");
+                    System.out.println("Enter 2 : To checkout rental leads from rentals.ca");
+                    System.out.println("Enter 3 : To checkout rental leads from rentseeker.ca");
+
+                    try {
+                        input = sc.nextInt();
+                        sc.nextLine();
+
+                        if(input >= 1 && input <= 3){
+                            isMenuSelected2 = true;
+                            globWebsiteCode = input;
+                        } else {
+                            System.out.println("Invalid input. Try again!");
+                            sc.nextLine(); // Consume the invalid input
+                        }
+
+                    } catch (InputMismatchException e) {
+                        System.out.println("Invalid input. Try again!");
+                        sc.nextLine(); // Consume the invalid input
+                    }
+                }
+
                 getPaths(globWebsiteCode);
 
                 // word completion -> spell check -> crawling -> parsing
+                boolean wasCrawlingParsingOK = false;
                 String cityName = null;
                 try {
                     cityName = runCrawlingAndParsing(sc);
+                    wasCrawlingParsingOK = true;
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    System.out.println("Crawling/Parsing error....");
+                    System.out.println("Please try again");
                 }
-                System.out.println(descriptionFolderPath);
-                System.out.println(cityName);
 
-                // invertedIndex -> FrequencyCount -> PageRanking
-                List<String> folders = List.of(Path.of(descriptionFolderPath, cityName).toString());
-                InvertIndexingRunner.init(folders);
-                InvertIndexingRunner.run();
+                if(wasCrawlingParsingOK) {
+                    // invertedIndex -> FrequencyCount -> PageRanking
+                    List<String> folders = List.of(Path.of(descriptionFolderPath, cityName).toString());
+                    InvertIndexingRunner.init(folders);
+                    InvertIndexingRunner.run();
 
-                //TODO tasks
-                //add email
-                //add phone
-                //add price (in understandable way)
-                //add url
-                //add comparison
+                    //TODO tasks
+                    //add email
+                    //add phone
+                    //add price (in understandable way)
+                    //add url
+                    //add comparison
+                }
             }
             if(webOption == 2){
                 break;
             }
         }
-//        getPaths(2);
-//        System.out.println(HTMLFolderPath);
-//        System.out.println(txtFolderPath);
-//        System.out.println(lastRunTimeFilePath);
-
     }
 }

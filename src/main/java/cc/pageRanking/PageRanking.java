@@ -1,14 +1,16 @@
 package cc.pageRanking;
 
 import cc.FrequencyCount.WordFrequency;
+import cc.PatternFinder.PatternFinder;
 
 import java.util.List;
 import java.util.Map;
 
 public class PageRanking {
 
-    public static PageScore[] rank(List<WordFrequency> wordFrequencyList) {
+    public static PageScore[] rank(String query, List<WordFrequency> wordFrequencyList) {
         System.out.println("Page Ranking . . .");
+        System.out.printf("Based on Query \"%s\"\n", query);
         PageScore[] pageScores = new PageScore[wordFrequencyList.size()];
 
         // Calculate scores for each document based on the specific words
@@ -26,7 +28,7 @@ public class PageRanking {
 
         // Output the sorted documents
         for (PageScore pageScore : pageScores) {
-            System.out.println(pageScore.document + ":: score - " + pageScore.score);
+            System.out.printf("%s | SCORE: %d | %s\n", pageScore.document, pageScore.score, PatternFinder.findListingUrlInFile(pageScore.document));
         }
 
         return pageScores;
@@ -39,7 +41,7 @@ public class PageRanking {
                 new WordFrequency("abcdabcd", Map.of("1", 3, "bathroom", 5, "bed", 5))
         );
 
-        rank(wordFrequencyList);
+        rank("bathroom", wordFrequencyList);
     }
 
     private static void quickSort(PageScore[] array, int begin, int end) {

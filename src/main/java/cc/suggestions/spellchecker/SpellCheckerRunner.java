@@ -23,13 +23,20 @@ public class SpellCheckerRunner {
 
     public static String spellCheckAndSelectCity(String input) {
         System.out.println("Spell Checking . . .");
+        System.out.println();
         String inputWord = input.toLowerCase();
         String finalCityName = "";
 
         if (!spellChecker.isSpelledCorrectly(inputWord)) {
             List<String> suggestions = spellChecker.suggestWords(inputWord);
-            System.out.println("SpellChecking suggestions:");
-            finalCityName = SuggestionHelper.printAndSelectSuggestion(suggestions);
+
+            if(!suggestions.isEmpty()){
+                System.out.println("SpellChecking suggestions:");
+                finalCityName = SuggestionHelper.printAndSelectSuggestion(suggestions);
+            } else {
+                System.out.println("No SpellChecking suggestions found.");
+                System.out.println();
+            }
         } else {
             System.out.println("The word \"" + input + "\" is spelled correctly.");
             finalCityName = input;

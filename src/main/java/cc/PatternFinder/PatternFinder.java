@@ -51,6 +51,7 @@ public class PatternFinder {
             e.printStackTrace();
         }
 
+        listingUrl = listingUrl.replaceAll("<", "").replaceAll(">", "");
         printPatternResults(filename, results, listingUrl);
 
         return results;
@@ -71,15 +72,29 @@ public class PatternFinder {
         return url;
     }
 
+    public static String findListingUrlInFile(String filename) {
+        File file = new File(filename);
+        String listingUrl = "";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                listingUrl = findListingUrl(line);
+            }
+        } catch (IOException e) {
+            System.out.println("File read error");
+        }
+
+        listingUrl = listingUrl.replaceAll("<", "").replaceAll(">", "");
+
+        return listingUrl;
+    }
+
     private static void printPatternResults (String filename, Set<String> results, String listingUrl) {
         if (results.isEmpty()) {
             return;
         }
-        System.out.println(filename + ":");
-
-        if (!listingUrl.isEmpty()) {
-            System.out.println("\t( Listing URL: " + listingUrl + " )");
-        }
+        System.out.printf("%s | URL: %s\n", filename, listingUrl);
 
         int serialNumber = 1;
         for (String result : results) {

@@ -113,7 +113,6 @@ Bike Racks
 Patio/Balcony
 View
 Efficient Appliances
-Refrigerator
 Off Street Parking
 Security Alarm
 Extra Storage
@@ -125,9 +124,10 @@ Bike Racks
 Patio/Balcony
 View
 Efficient Appliances
-Refrigerator
 Off Street Parking
 Security Alarm
 Extra Storage
 Electronic Thermostat
 BBQ/Picnic Area
+
+<<<https://rentals.ca/toronto/425-wellington-street-west>>>

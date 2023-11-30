@@ -30,11 +30,19 @@ public class CityAutoComplete {
 
     public static String runCityAutoComplete(String input) {
         System.out.println("Autocompleting . . .");
+        System.out.println();
         String inptWord = input.toLowerCase();
 
         List<String> suggestions = citytrie.autoComplete(inptWord);
-        System.out.println("Autocomplete suggestions:");
-        String finalCityName = SuggestionHelper.printAndSelectSuggestion(suggestions);
+        String finalCityName = "";
+
+        if(!suggestions.isEmpty()){
+            System.out.println("Autocomplete suggestions:");
+            finalCityName = SuggestionHelper.printAndSelectSuggestion(suggestions);
+        } else {
+            System.out.println("No Autocomplete suggestions found.");
+            System.out.println();
+        }
 
         return finalCityName;
     }

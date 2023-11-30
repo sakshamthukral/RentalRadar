@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class FileReader {
 
     private static final String WORD_WITH_SPACE = "[^a-zA-Z0-9 ]+";
-    private static final String WORD_WITHOUT_SPACE = "[^a-zA-Z0-9]+";
+    public static final String WORD_WITHOUT_SPACE = "[^a-zA-Z0-9]+";
 
     public static List<String> readFile(String fName, TYPE type) {
         return readFileContent("", fName, type);

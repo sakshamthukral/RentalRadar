@@ -1,4 +1,5 @@
 package cc.suggestions.Autocomplete;
+
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.FileReader;
@@ -36,7 +37,8 @@ public class AutocompleteTrie {
     public void showSrchFrq(String word) {
         TNode node = findNode(word.toLowerCase());
         if (node != null) {
-            System.out.println("City Name: " + word + ", Search Frequency: " + node.schFrq);
+            System.out.println("| City Name \t| Search Frequency |");
+            System.out.printf("| %s \t\t|\t %s \t\t|\n",word, node.schFrq);
         } else {
             System.out.println("No Search Frequency for this city \""+word+"\"");
         }
@@ -88,7 +90,7 @@ public class AutocompleteTrie {
         try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
             saveSrchFrequencies(root, new StringBuilder(), writer);
         } catch (IOException e) {
-            e.printStackTrace(); // TODO replace with Error Handling
+            System.out.printf("File write error : %s\n", fileName);
         }
     }
 
@@ -125,7 +127,7 @@ public class AutocompleteTrie {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.printf("File read error : %s\n", fileName);
         }
     }
 }

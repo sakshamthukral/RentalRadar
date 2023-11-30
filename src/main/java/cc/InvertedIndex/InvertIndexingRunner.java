@@ -9,10 +9,7 @@ import cc.utils.FileReader;
 import cc.utils.config;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class InvertIndexingRunner {
     public static final String VALID_WORD_REGEX = "^[A-Za-z0-9\\-_ ]*$";
@@ -110,7 +107,8 @@ public class InvertIndexingRunner {
                 System.out.println("Try again with another search query");
             } else {
                 System.out.printf("Documents containing the query \"%s\" : \n", query);
-                System.out.printf("%s \n", String.join("\n", result));
+
+                result.stream().iterator().forEachRemaining(elem -> System.out.printf("%s - %s\n", elem, PatternFinder.findListingUrlInFile(elem)));
                 System.out.println();
 
                 // showing frequency count
@@ -121,16 +119,19 @@ public class InvertIndexingRunner {
                 wordFrequencyList = FrequencyCount.getMultipleWordsFrequencyCount(documents, words);
 
                 for (WordFrequency wf : wordFrequencyList) {
-                    System.out.printf("%s - word frequencies :\n", wf.filename);
+                    System.out.printf("FILE: %s - URL: %s\n", wf.filename, PatternFinder.findListingUrlInFile(wf.filename));
+                    System.out.println("-- Word Frequency List --");
+
+                    System.out.printf("| WORD\t| FREQUENCY |\n");
                     //TODO a table like freq count?
                     for (String key : wf.wordsCount.keySet()) {
-                        System.out.printf("%s - %s\n", key, wf.wordsCount.get(key));
+                        System.out.printf("| %s\t| %d\t|\n",key, wf.wordsCount.get(key) );
                     }
                     System.out.println();
                 }
 
                 // PageRanking
-                PageScore[] sortedPages = PageRanking.rank(wordFrequencyList);
+                PageScore[] sortedPages = PageRanking.rank(query, wordFrequencyList);
                 System.out.println();
 
                 int repeatInput = menuTakeUserInputToForward();
@@ -152,24 +153,24 @@ public class InvertIndexingRunner {
     // take menu item input from user as integer
     private static int menuTakeUserInputToForward() {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Enter 1 : To find pattern in the files");
-        System.out.println("Enter 2 : To search for a different query");
+        int input = 0;
 
-        String input = sc.next();
+        boolean isMenuSelected3 = false;
+        while (!isMenuSelected3){
+            System.out.println("Enter 1 : To find pattern in the files");
+            System.out.println("Enter 2 : To search for a different query");
 
-        while (!input.matches("[0-9]")) {
-            System.out.println("Please enter a valid input");
-            input = sc.next();
+            try {
+                input = sc.nextInt();
+                sc.nextLine();
+                isMenuSelected3 = true;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Try again!");
+                sc.nextLine(); // Consume the invalid input
+            }
         }
 
-        int exit = 2;
-
-        try{
-            return Integer.parseInt(input);
-        }catch (NumberFormatException e){
-            System.out.println("Number parsing error");
-            return exit;
-        }
+        return input;
     }
 
     // Take valid word input from user

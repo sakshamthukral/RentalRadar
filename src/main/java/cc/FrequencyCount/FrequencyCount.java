@@ -27,6 +27,7 @@ public class FrequencyCount {
 
         // Define a pattern to split the file content based on punctuations, spaces and tabs
         Pattern splitPattern = Pattern.compile("[\\s\\p{Punct}]+");
+        // TODO split using space and remove all punc FileReader.WORD_WITHOUT_SPACE
 
         try (BufferedReader bufferReader = new BufferedReader(new FileReader(file))) {
             String currentLine;
@@ -67,6 +68,3 @@ public class FrequencyCount {
 
     }
 }
-
-
-
