@@ -15,7 +15,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class InvertIndexingRunner {
-    public static final String VALID_WORD_REGEX = "[A-Za-z0-9 ]+";
+    public static final String VALID_WORD_REGEX = "^[A-Za-z0-9\\-_ ]*$";
     private static InverseIndexing indexer;
 
     public static void init(List<String> folders) {
@@ -72,6 +72,7 @@ public class InvertIndexingRunner {
 
     // take menu item input from user as integer
     private static int menuTakeUserInput() {
+        System.out.println();
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter 1 : To search for words in the crawled documents");
         System.out.println("Enter 2 : To Return to main menu");
@@ -103,8 +104,7 @@ public class InvertIndexingRunner {
             String query = queryTakeUserInput();
             Set<String> result = indexer.search(query);
 
-            //TODO do a intersection between files for multiple word search
-
+            System.out.println();
             if (result.isEmpty()) {
                 System.out.printf("No documents found containing the query \"%s\"\n", query);
                 System.out.println("Try again with another search query");
@@ -131,6 +131,7 @@ public class InvertIndexingRunner {
 
                 // PageRanking
                 PageScore[] sortedPages = PageRanking.rank(wordFrequencyList);
+                System.out.println();
 
                 int repeatInput = menuTakeUserInputToForward();
 
@@ -173,12 +174,14 @@ public class InvertIndexingRunner {
 
     // Take valid word input from user
     private static String queryTakeUserInput() {
+        System.out.println();
         // Function InvertIndexing
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter the word you want to search among the documents : ");
         String query = sc.nextLine().trim();
 
         while (!query.matches(VALID_WORD_REGEX)) {
+            System.out.println();
             System.out.println("Please enter a valid word!");
             query = sc.nextLine();
         }

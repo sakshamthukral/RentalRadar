@@ -2,14 +2,16 @@ package cc.crawler;
 
 import cc.utils.config;
 import cc.utils.helper;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -44,8 +46,7 @@ public class crawlLiv {
 
         driver.findElement(By.cssSelector("button.sc-9b749994-8.lhKUEI")).click(); // Clicking on Allowing cookies when pop-up comes
         switch (inputKeyword) {
-            case "Toronto", "toronto" -> driver.get("https://liv.rent/rental-listings/city/toronto");
-//                    driver.findElement(By.cssSelector("div.sc-ece85b1a-0.hHScca")).click(); // For searching rentals in Toronto
+            case "Toronto", "toronto" ->  driver.get("https://liv.rent/rental-listings/city/toronto");
             case "Windsor", "windsor" -> driver.get("https://liv.rent/rental-listings/city/windsor-on");
             case "Winnipeg", "winnipeg" -> driver.get("https://liv.rent/rental-listings/city/winnipeg");
         }
@@ -62,12 +63,6 @@ public class crawlLiv {
             List<String> links = new ArrayList<>();
             List<String> leadUrlList;
             try {
-                // Scroll the listing element
-//                scrollToPageEnd(driver, driver
-//                        .findElement(By.cssSelector("div.indiana-scroll-container")));
-//                wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".photo-carousel-image"))); // Waiting for all the images to appear
-
-                // Getting links to all the leads visible on the Page
                 leadUrlList = driver
                         .findElements(By.cssSelector("a[href*='/rental-listings/detail/']"))
                         .stream()
@@ -80,16 +75,12 @@ public class crawlLiv {
                     gotLeads=false;
                     break;
                 }
-
             } catch (TimeoutException e) {
                 System.out.println("Additional page not found!!");
                 gotLeads=false;
                 break;
             }
-//            if(leads.size()==0){
-//                gotLeads=false;
-//                break;
-//            }
+
             for(String link: leadUrlList){
                 Pattern pattern = Pattern.compile(config.linkRegex);
                 Matcher matcher = pattern.matcher(link);
@@ -117,7 +108,6 @@ public class crawlLiv {
                         descriptionSection = pS.get(0);
                     }
                 } catch (NoSuchElementException | TimeoutException e) {
-                    // Handle the case when "Read More" button is not found
                     System.out.println("Read More button not found. Skipping...");
                 } catch (Exception e) {
                     System.out.println("Read More button not found. Skipping...");
@@ -130,9 +120,10 @@ public class crawlLiv {
                 if(descriptionSection != null)
                     descriptionText = descriptionSection.getText();
 
+                descriptionText = descriptionText+"\n<<<"+link+">>>";
+
                 String descriptionFile = config.descriptionLiv+"/"+inputKeyword +"/page_"+page+"_listing_" + i + ".txt";
                 try (FileWriter fileWriter = new FileWriter(descriptionFile)) {
-                    fileWriter.write(String.format("[URL]::%s\n\n", link));
                     fileWriter.write(overviewText); // adding overview text
                     fileWriter.write("\n");
                     fileWriter.write(descriptionText);

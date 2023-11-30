@@ -103,8 +103,7 @@ public class crawlRentSeeker {
                 } catch (Exception e) {
                     System.out.println("No Description Available!!");
                 }
-
-
+                concatenatedText.append("\n<<<").append(link).append(">>>");
 
 //                String descriptionText = description.getText();
 //
