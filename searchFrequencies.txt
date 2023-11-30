@@ -63,12 +63,12 @@ strathcona 1
 sudbury 1
 surrey 1
 terrebonne 1
-toronto 39
-vancouver 3
+toronto 42
+vancouver 4
 vaughan 1
 victoria 3
 waterloo 1
 welland 1
 whitby 1
 windsor 40
-winnipeg 4
+winnipeg 6
