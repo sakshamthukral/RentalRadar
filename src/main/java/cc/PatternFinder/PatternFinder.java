@@ -20,6 +20,10 @@ public class PatternFinder {
 
         for (String filename : filenames) {
             MatchResult currentFileResult = findInFile(filename, regexPattern);
+            if (currentFileResult.results.isEmpty()) {
+                MatchResult currentFileParsedResult = findInFile(filename.replace("description", "parsed"), regexPattern);
+                currentFileResult.results = currentFileParsedResult.results;
+            }
             matchResults.add(currentFileResult);
         }
 
@@ -269,9 +273,15 @@ public class PatternFinder {
     }
 
     private static int parseCurrencyAmount(String amount) {
+        String withoutDecimal = amount.split("\\.")[0];
         // Use regex to remove "$" sign and commas, and convert to an integer
-        String cleanedAmount = amount.replaceAll("[^\\d]", "");
+        String cleanedAmount = withoutDecimal.replaceAll("[^\\d]", "");
         return Integer.parseInt(cleanedAmount);
+    }
+
+    public static void main(String[] args) {
+        List<String> filenames = List.of("DB/description_rental.ca/windsor/page_1_listing_5.txt", "DB/description_rental.ca/windsor/page_1_listing_25.txt");
+        run(filenames);
     }
 
 }
