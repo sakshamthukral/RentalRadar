@@ -15,7 +15,8 @@ class TNode {
         this.val1 = val1;
     }
 }
-
+// This class is responsible for interacting with the AutocompleteTrie to provide city name autocompletion. 
+// This class uses AutocompleteTrie to initialize the autocomplete system. 
 public class CityAutoComplete {
     private static AutocompleteTrie citytrie;
 
@@ -27,7 +28,7 @@ public class CityAutoComplete {
         }
         citytrie.loadSrchFrqFrmFile(config.searchFrequencyFilePath);
     }
-
+     // It will run the autocomplete and return final city name.
     public static String runCityAutoComplete(String input) {
         System.out.println("Autocompleting . . .");
         System.out.println();

@@ -12,6 +12,7 @@ import java.util.*;
 import cc.suggestions.Autocomplete.CityAutoComplete;
 import cc.utils.helper;
 import org.apache.commons.io.FileUtils;
+import cc.suggestions.TopCities.TopSearchedCities;
 import cc.utils.config;
 
 public class Main {
@@ -107,7 +108,20 @@ public class Main {
         long lastRunTime = getLastRunTime(lastRunTimeFilePath,city.toLowerCase());
         System.out.println("Last run time for " + city + ": " + (lastRunTime > 0 ? new Date(lastRunTime) : "N/A"));
         System.out.println();
+        try {
+            String DocLoc = config.searchFrequencyFilePath;
+            Map<String, Integer> cityFrequencies = TopSearchedCities.rdCityFrq(DocLoc);
+            String[] topCities = TopSearchedCities.getTCities(cityFrequencies, 3);
 
+            System.out.println("Here are the top 3 most searched cities:");
+            for (String city2 : topCities) {
+                System.out.println(city2);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+         System.out.println();
         // TODO add func to go back to the CITY input screen
 
         System.out.print("Do you want to rerun the program? (y/n): ");
