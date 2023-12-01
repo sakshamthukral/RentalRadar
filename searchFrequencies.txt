@@ -48,7 +48,7 @@ oshawa 1
 ottawa 1
 peterborough 1
 pickering 1
-quebec 5
+quebec 6
 regina 1
 repentigny 1
 richelieu 1
@@ -62,12 +62,12 @@ strathcona 1
 sudbury 1
 surrey 1
 terrebonne 1
-toronto 49
+toronto 50
 vancouver 4
 vaughan 1
 victoria 3
 waterloo 1
 welland 1
 whitby 1
-windsor 46
+windsor 49
 winnipeg 10

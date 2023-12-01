@@ -4,9 +4,11 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static cc.utils.FileReader.WORD_WITHOUT_SPACE;
+
 public class FrequencyCount {
     // Define a pattern to split the file content based on punctuations, spaces and tabs
-    public static final Pattern SPLIT_PATTERN = Pattern.compile("[\\s\\p{Punct}]+");
+//    public static final Pattern SPLIT_PATTERN = Pattern.compile("[\\s\\p{Punct}]+");
     // TODO split using space and remove all punc FileReader.WORD_WITHOUT_SPACE
 
     public static List<WordFrequency> getMultipleWordsFrequencyCount(String[] filenames, String[] searchWords) {
@@ -37,10 +39,10 @@ public class FrequencyCount {
             while ((currentLine = bufferReader.readLine()) != null) {
                 // Convert the entire line to lower case for accurate frequency count
                 String lowerCaseLine = currentLine.toLowerCase();
-                String[] words = SPLIT_PATTERN.split(lowerCaseLine);
+                String[] words = lowerCaseLine.split(" ");
 
                 for (String word : words) {
-                    word = word.trim();
+                    word = word.replaceAll(WORD_WITHOUT_SPACE, "").trim().toLowerCase();
                     if (!word.isEmpty()) {
                         for (String searchWord : searchWords) {
                             if (word.equalsIgnoreCase(searchWord)) {
