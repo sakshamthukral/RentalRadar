@@ -91,7 +91,7 @@ public class Main {
             String suggestion = "";
             CityAutoComplete.init();
             SpellCheckerRunner.init();
-            if (city.length() < config.minCityLength) {
+            if (city.length() < config.maxCityLength) {
                 suggestion = CityAutoComplete.runCityAutoComplete(city);
             }
             if (suggestion.isBlank() || city.length() >= config.minCityLength) { //TODO rethink the logic
@@ -118,7 +118,7 @@ public class Main {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error Reading the search freq file");
         }
          System.out.println();
         // TODO add func to go back to the CITY input screen
@@ -260,21 +260,17 @@ public class Main {
                 if(wasCrawlingParsingOK) {
                     // invertedIndex -> FrequencyCount -> PageRanking
                     List<String> folders = List.of(Path.of(descriptionFolderPath, cityName).toString());
-                    InvertIndexingRunner.init(folders);
-                    InvertIndexingRunner.run();
+                    boolean wasFolderOK = InvertIndexingRunner.init(folders);
+                    if(wasFolderOK) {
+                        InvertIndexingRunner.run();
+                    } else {
+                        System.out.println("Please crawl again");
+                    }
 
-                    //TODO tasks
-                    //add email
-                    //add phone
-                    //add price (in understandable way)
-                    //add url
-                    //add comparison
                 }
-            }
-            if(webOption == 2){
+            } else if(webOption == 2){
                 break;
-            }
-            else{
+            } else{
                 System.out.println("Invalid Option Entered");
             }
         }

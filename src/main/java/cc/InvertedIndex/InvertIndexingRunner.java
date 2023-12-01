@@ -15,11 +15,11 @@ public class InvertIndexingRunner {
     public static final String VALID_WORD_REGEX = "^[A-Za-z0-9\\-_ ]*$";
     private static InverseIndexing indexer;
 
-    public static void init(List<String> folders) {
+    public static boolean init(List<String> folders) {
         indexer = new InverseIndexing();
 
         addStopWordsTask();
-        addWordsTask(folders);
+        return addWordsTask(folders);
     }
 
     private static void addStopWordsTask() {
@@ -28,7 +28,9 @@ public class InvertIndexingRunner {
     }
 
     // may need to work on removing symbols
-    private static void addWordsTask(List<String> folders) {
+    private static boolean addWordsTask(List<String> folders) {
+
+        boolean folderExists = true;
 
         for (String parentPath : folders) {
             if(!parentPath.isBlank()){
@@ -42,9 +44,14 @@ public class InvertIndexingRunner {
                     System.out.printf("No file found in - %s\n", Path.of(parentPath));
                     System.out.println("Do a crawling for the city first");
                     System.out.println();
+                    folderExists = false;
+                    break;
                 }
+            } else {
+                folderExists = false;
             }
         }
+        return folderExists;
     }
 
     public static void main(String[] args) {
