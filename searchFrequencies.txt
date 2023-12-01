@@ -13,7 +13,6 @@ burnaby 1
 caledon 1
 calgary 1
 cambridge 1
-capebreton 1
 catharines 1
 chilliwack 1
 clarington 1
@@ -49,7 +48,7 @@ oshawa 1
 ottawa 1
 peterborough 1
 pickering 1
-quebec 2
+quebec 5
 regina 1
 repentigny 1
 richelieu 1
