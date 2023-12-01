@@ -97,7 +97,7 @@ public class PatternFinder {
         }
     }
 
-    private static void findCurrencyAmounts(List<String> filenames) {
+    private static void findListingPrices(List<String> filenames) {
         List<MatchResult> results = findInFiles(filenames, CURRENCY_REGEX);
 
         List<ListingPrice> listingPrices = new ArrayList<>();
@@ -171,7 +171,7 @@ public class PatternFinder {
             switch (menuUserInput) {
                 case 1 -> {
                     System.out.println("Finding Listing Prices...");
-                    findCurrencyAmounts(filenames);
+                    findListingPrices(filenames);
                 }
                 case 2 -> {
                     System.out.println("Finding Contact Details...");
