@@ -106,7 +106,6 @@ public class Main {
         }
 
         long lastRunTime = getLastRunTime(lastRunTimeFilePath,city.toLowerCase());
-        System.out.println("Last run time for " + city + ": " + (lastRunTime > 0 ? new Date(lastRunTime) : "N/A"));
         System.out.println();
         try {
             String DocLoc = config.searchFrequencyFilePath;
@@ -123,9 +122,15 @@ public class Main {
         }
          System.out.println();
         // TODO add func to go back to the CITY input screen
-
+        System.out.println("Last crawl time for " + city + ": " + (lastRunTime > 0 ? new Date(lastRunTime) : "N/A"));
         System.out.print("Do you want to rerun the program? (y/n): ");
+
         String rerunChoice = sc.nextLine().toLowerCase();
+        while(!rerunChoice.equals("y") && !rerunChoice.equals("n")) {
+            System.out.println("Invalid option selected!!");
+            System.out.print("Do you want to rerun the program? (y/n): ");
+            rerunChoice = sc.nextLine().toLowerCase();
+        }
         if ("y".equals(rerunChoice)) {
         System.out.print("Enter the number of pages(<5 in order to prevent longer running times) you want to scrape: ");
         int numPages = sc.nextInt();
