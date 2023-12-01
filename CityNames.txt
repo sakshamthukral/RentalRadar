@@ -1,0 +1,139 @@
+Calgary
+Edmonton
+Red Deer
+Lethbridge
+St. Albert
+Medicine Hat
+Grande Prairie
+Airdrie
+Spruce Grove
+Leduc
+Fort Saskatchewan
+Chestermere
+Lloydminster
+Camrose
+Beaumont
+Vancouver
+Victoria
+Kelowna
+Abbotsford
+Kamloops
+Nanaimo
+Chilliwack
+Surrey
+Burnaby
+Richmond
+Langley
+Coquitlam
+Saanich
+Maple Ridge
+New Westminster
+Winnipeg
+Brandon
+Steinbach
+Thompson
+Portage la Prairie
+Winkler
+Selkirk
+Dauphin
+Morden
+The Pas
+Fredericton
+Moncton
+Saint John
+Miramichi
+Edmundston
+Bathurst
+Campbellton
+Dieppe
+Oromocto
+Shediac
+St. John's
+Corner Brook
+Mount Pearl
+Paradise
+Grand Falls-Windsor
+Gander
+Happy Valley-Goose Bay
+Labrador City
+Stephenville
+Carbonear
+Halifax
+Sydney
+Dartmouth
+Truro
+New Glasgow
+Glace Bay
+Kentville
+Amherst
+Bridgewater
+Yarmouth
+Toronto
+Ottawa
+Mississauga
+Brampton
+Hamilton
+London
+Markham
+Vaughan
+Kitchener
+Windsor
+Richmond Hill
+Oakville
+Burlington
+Greater Sudbury
+Oshawa
+Barrie
+St. Catharines
+Guelph
+Cambridge
+Kingston
+Thunder Bay
+Waterloo
+Brantford
+Ajax
+Pickering
+Charlottetown
+Summerside
+Stratford
+Cornwall
+Montague
+Montreal
+Quebec City
+Laval
+Gatineau
+Longueuil
+Sherbrooke
+Saguenay
+Levis
+Trois-Rivieres
+Terrebonne
+Saint-Jean-sur-Richelieu
+Brossard
+Repentigny
+Drummondville
+Saint-Jerome
+Granby
+Blainville
+Saint-Hyacinthe
+Dollard-Des Ormeaux
+Rimouski
+Regina
+Saskatoon
+Prince Albert
+Moose Jaw
+Swift Current
+Yorkton
+North Battleford
+Estevan
+Martensville
+Warman
+Yellowknife
+Hay River
+Inuvik
+Iqaluit
+Rankin Inlet
+Arviat
+Whitehorse
+Dawson City
+Watson Lake
