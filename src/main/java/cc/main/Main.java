@@ -204,7 +204,7 @@ public class Main {
 
             boolean isMenuSelected1 = false;
             while (!isMenuSelected1){
-                System.out.println("Enter-1: To run web crawling and parsing!");
+                System.out.println("Enter-1: To crawl and parse the rental leads!");
                 System.out.println("Enter-2: To Exit!");
 
                 try {
