@@ -110,6 +110,8 @@ public class InvertIndexingRunner {
 
                 result.stream().iterator().forEachRemaining(elem -> System.out.printf("%s - %s\n", elem, PatternFinder.findListingUrlInFile(elem)));
                 System.out.println();
+                System.out.println("-------------------------------------------------");
+                System.out.println();
 
                 // showing frequency count
                 System.out.println("Frequency Counting . . .");
@@ -129,6 +131,9 @@ public class InvertIndexingRunner {
                     }
                     System.out.println();
                 }
+
+                System.out.println("-------------------------------------------------");
+                System.out.println();
 
                 // PageRanking
                 PageScore[] sortedPages = PageRanking.rank(query, wordFrequencyList);
