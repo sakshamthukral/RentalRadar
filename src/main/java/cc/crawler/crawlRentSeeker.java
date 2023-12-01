@@ -42,6 +42,8 @@ public class crawlRentSeeker {
             case "Toronto", "toronto" ->
                     driver.get(WEBSITE+"/rentals/apartments/ontario/toronto"); // For searching rentals in Toronto
             case "Windsor", "windsor" -> driver.get(WEBSITE+"/rentals/apartments/ontario/windsor");
+            case "Quebec", "quebec" -> driver.get(WEBSITE+"/rentals/apartments/quebec/quebec-city");
+            case "Vancouver", "vancouver" -> driver.get(WEBSITE+"/rentals/apartments/british-columbia/vancouver");
         }
 
         int page=1;

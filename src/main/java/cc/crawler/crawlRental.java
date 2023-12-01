@@ -51,6 +51,7 @@ public class crawlRental {
             case "Halifax", "halifax" -> driver.get(WEBSITE+"/halifax");
             case "Laval", "laval" -> driver.get(WEBSITE+"/laval");
             case "London", "london" -> driver.get(WEBSITE+"/london");
+            case "Quebec", "quebec" -> driver.get(WEBSITE+"/quebec-city");
         }
 
         int page=1;

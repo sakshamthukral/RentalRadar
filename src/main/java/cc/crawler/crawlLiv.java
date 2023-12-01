@@ -49,6 +49,7 @@ public class crawlLiv {
             case "Toronto", "toronto" ->  driver.get("https://liv.rent/rental-listings/city/toronto");
             case "Windsor", "windsor" -> driver.get("https://liv.rent/rental-listings/city/windsor-on");
             case "Winnipeg", "winnipeg" -> driver.get("https://liv.rent/rental-listings/city/winnipeg");
+            case "Quebec", "quebec" -> driver.get("https://liv.rent/rental-listings/city/quebec-city");
         }
 
 
