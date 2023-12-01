@@ -62,13 +62,13 @@ sherbrooke 1
 strathcona 1
 sudbury 1
 surrey 1
-terrebonne 2
-toronto 42
-vancouver 6
+terrebonne 1
+toronto 48
+vancouver 4
 vaughan 1
 victoria 3
 waterloo 1
 welland 1
 whitby 1
-windsor 41
+windsor 43
 winnipeg 10

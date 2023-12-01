@@ -49,6 +49,7 @@ public class config {
 
     public static final String cityRegex = "^[a-zA-Z]+$";
     public static final String linkRegex = "(https?://[a-zA-Z0-9./-]+)";
-    public static final int minCityLength = 15;
+    public static final int maxCityLength = 15;
+    public static final int minCityLength = 4;
 
 }
