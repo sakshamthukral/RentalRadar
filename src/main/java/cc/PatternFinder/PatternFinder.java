@@ -269,7 +269,12 @@ public class PatternFinder {
         }
 
         for (ListingPrice response : listingPrices) {
-            System.out.println(response.filename + " | PRICE: $" + response.price + " | " + response.listingUrl);
+            if (response.priceRange == null) {
+                System.out.println(response.filename + " | " + response.listingUrl + " | PRICE: $" + response.price + " | (PRICE RANGE: <N/A> )");
+            } else {
+                System.out.println(response.filename + " | " + response.listingUrl + " | PRICE: $" + response.price + " | (PRICE RANGE: " + response.priceRange + " )");
+
+            }
         }
 
     }
