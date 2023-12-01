@@ -21,8 +21,8 @@ public class config {
      public static final String chromeDriverPath = "lib/chromedriver.exe"; // Path of chromedriver.exe
 //    // public static final String chromeBrowserPath = "chrome-win64/chrome.exe"; // Path of chrome.exe
      public static final String stopwordsFilePath = "stopwords.txt"; // Path to stopwords file -> file is at the root of the project
-     public static final String searchFrequencyFilePath = "D:\\ACC5\\compute-champions\\searchFrequencies.txt"; //give full path of searchFrequencies.txt
-     public static final String cityNamesFilePath="D:\\ACC5\\compute-champions\\CityNames.txt"; // give full path of CityNames.txt
+     public static final String searchFrequencyFilePath = "searchFrequencies.txt"; //give full path of searchFrequencies.txt
+     public static final String cityNamesFilePath="CityNames.txt"; // give full path of CityNames.txt
 
     public static final String[] cities = {"Toronto", "Montreal", "Calgary", "Ottawa", "Edmonton", "Winnipeg",
                 "Vancouver", "Brampton", "Hamilton", "Surrey", "Quebec", "Halifax", "Laval",

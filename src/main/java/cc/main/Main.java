@@ -187,6 +187,7 @@ public class Main {
     }
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
+        System.out.println("Real Estate Rental Analysis Project : ACC");
         while (true){
             int webOption = 0;
 
@@ -261,6 +262,9 @@ public class Main {
             }
             if(webOption == 2){
                 break;
+            }
+            else{
+                System.out.println("Invalid Option Entered");
             }
         }
     }
