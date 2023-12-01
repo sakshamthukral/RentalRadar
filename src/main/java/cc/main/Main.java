@@ -118,7 +118,7 @@ public class Main {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error Reading the search freq file");
         }
          System.out.println();
         // TODO add func to go back to the CITY input screen
@@ -264,15 +264,13 @@ public class Main {
                     if(wasFolderOK) {
                         InvertIndexingRunner.run();
                     } else {
-
+                        System.out.println("Please crawl again");
                     }
 
                 }
-            }
-            if(webOption == 2){
+            } else if(webOption == 2){
                 break;
-            }
-            else{
+            } else{
                 System.out.println("Invalid Option Entered");
             }
         }
