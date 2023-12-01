@@ -10,7 +10,9 @@ import java.util.regex.Pattern;
 public class PatternFinder {
     public static final List<String> EMAIL_REGEX = List.of("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b");
     public static final List<String> PHONE_REGEX = List.of("\\d{3}-\\d{7}", "\\(\\d{3}\\)\\s\\d{3}-\\d{4}", "\\+1\\s\\(\\d{3}\\)\\s\\d{3}-\\d{4}", "\\+1\\s\\(\\d{3}\\)\\s\\d{3}-\\d{4}");
-    public static final List<String> CURRENCY_REGEX = List.of("\\$[0-9,]+(?:\\.[0-9]{2})?");
+    public static final String CURRENCY_RANGE_REGEX = "\\$[\\d,]+ - \\$[\\d,]+";
+//    "\\$\\d+ - \\$\\d+"
+    public static final List<String> CURRENCY_REGEX = List.of("\\$[0-9,]+(?:\\.[0-9]{2})?", CURRENCY_RANGE_REGEX);
     public static final List<String> DATE_REGEX = List.of("\\d{4}/\\d{1,2}/\\d{1,2}", "\\d{4}-\\d{1,2}-\\d{1,2}", "\\d{4}-\\d{2}-\\d{2}", "\\d{1,2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\\d{4}");
     public static final String URL_REGEX = "<<<(https?://\\S+)>>>";
 
@@ -101,6 +103,33 @@ public class PatternFinder {
         }
     }
 
+    private static void getPriceFromRange (Set<String> prices, ListingPrice currentListing) {
+        String priceRange = "";
+        String regex = "\\$\\d+ - \\$\\d+";
+
+        // Compile the regex pattern
+        Pattern pattern = Pattern.compile(regex);
+        for (String amount : prices) {
+            Matcher matcher = pattern.matcher(amount);
+            if (matcher.matches()) {
+                priceRange = amount;
+            }
+        }
+
+        if (!priceRange.isEmpty()) {
+            // Extract the captured values
+            String[] splitPrices = priceRange.split(" - ");
+            int minPrice = parseCurrencyAmount(splitPrices[0]);
+            if (minPrice == 0) {
+                currentListing.price = parseCurrencyAmount(splitPrices[1]);
+            } else {
+                currentListing.price = parseCurrencyAmount(splitPrices[0]);
+            }
+            currentListing.priceRange = priceRange;
+        }
+
+    }
+
     private static void findListingPrices(List<String> filenames) {
         List<MatchResult> results = findInFiles(filenames, CURRENCY_REGEX);
 
@@ -109,7 +138,10 @@ public class PatternFinder {
         for (MatchResult result : results) {
             if (!result.results.isEmpty()) {
                 ListingPrice currentListing = new ListingPrice(result.filename, result.listingUrl);
-                findRequiredPrice(result.results, currentListing);
+                getPriceFromRange(result.results, currentListing);
+                if (currentListing.price == 0) {
+                    findRequiredPrice(result.results, currentListing);
+                }
                 listingPrices.add(currentListing);
             }
         }
@@ -280,7 +312,7 @@ public class PatternFinder {
     }
 
     public static void main(String[] args) {
-        List<String> filenames = List.of("DB/description_rental.ca/windsor/page_1_listing_5.txt", "DB/description_rental.ca/windsor/page_1_listing_25.txt");
+        List<String> filenames = List.of("DB/description_rental.ca/toronto/page_1_listing_14.txt", "DB/description_rental.ca/toronto/page_1_listing_2.txt", "DB/description_rental.ca/toronto/page_1_listing_7.txt", "DB/description_rental.ca/toronto/page_1_listing_4.txt", "DB/description_rental.ca/toronto/page_1_listing_1.txt");
         run(filenames);
     }
 
