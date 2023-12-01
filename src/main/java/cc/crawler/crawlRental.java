@@ -51,6 +51,7 @@ public class crawlRental {
             case "Halifax", "halifax" -> driver.get(WEBSITE+"/halifax");
             case "Laval", "laval" -> driver.get(WEBSITE+"/laval");
             case "London", "london" -> driver.get(WEBSITE+"/london");
+            case "Quebec", "quebec" -> driver.get(WEBSITE+"/quebec-city");
         }
 
         int page=1;
@@ -99,22 +100,31 @@ public class crawlRental {
                     System.out.println("Read More button not found. Skipping...");
                 }
                 threadWait(5000);
-                WebElement description = driver.findElement(By.cssSelector("div.truncated-content__full.u-from-wysiwyg"));
-                List<WebElement> childElements = description.findElements(By.xpath(".//*"));
                 StringBuilder concatenatedText = new StringBuilder();
-                for (WebElement child : childElements) {
-                    concatenatedText.append(child.getText()).append("\n");
-                }
-                concatenatedText.append("\n<<<").append(link).append(">>>");
 
-//                String descriptionText = description.getText();
-//
+                try{
+                    WebElement description = driver.findElement(By.cssSelector("div.truncated-content__full.u-from-wysiwyg"));
+                    List<WebElement> childElements = description.findElements(By.xpath(".//*"));
+
+                    for (WebElement child : childElements) {
+                        concatenatedText.append(child.getText()).append("\n");
+                    }
+                    concatenatedText.append("\n<<<").append(link).append(">>>");
+                } catch (TimeoutException | NoSuchElementException e) {
+                    System.err.println("Could not find the selection : " + e.getMessage());
+                    break;  // Break the loop if the button is not found
+                } catch (Exception e) {
+                    System.err.println("An unexpected exception occurred: " + e.getMessage());
+                    break;
+                }
+
+
                 String descriptionFile = config.descriptionRental+"/"+inputKeyword +"/page_"+page+"_listing_" + i + ".txt";
                 try (FileWriter fileWriter = new FileWriter(descriptionFile)) {
                     fileWriter.write(concatenatedText.toString());
                     System.out.println("Description of " + link + " saved to " + descriptionFile);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println("Could not save the description : " + e.getMessage());
                 }
 
                 String fileName = config.HTMLFolderPathRental+"/"+inputKeyword+"/page_"+page+"_listing_" + i + ".html";
@@ -122,9 +132,9 @@ public class crawlRental {
                     fileWriter.write(htmlContent);
                     System.out.println("HTML content of " + link + " saved to " + fileName);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println("Could not save the html : " + e.getMessage());
                 }
-//
+
                 threadWait(5000);
                 i++;
             }
@@ -143,7 +153,6 @@ public class crawlRental {
                 break;
             } catch (Exception e) {
                 System.err.println("An unexpected exception occurred: " + e.getMessage());
-                e.printStackTrace();  // Print the full stack trace for debugging
                 break;
             }
         }

@@ -31,7 +31,7 @@ public class config {
                 "Oshawa", "Sherbrooke", "Sudbury", "Abbotsford", "Coquitlam", "Barrie", "Saguenay",
                 "Kelowna", "Guelph", "Whitby", "Cambridge", "Catharines", "Milton", "Langley", "Kingston",
                 "Ajax", "Waterloo", "Terrebonne", "Saanich", "Delta", "Brantford", "Clarington", "Nanaimo",
-                "Strathcona", "Pickering", "Lethbridge", "Kamloops", "Richelieu", "Niagara", "Cape Breton",
+                "Strathcona", "Pickering", "Lethbridge", "Kamloops", "Richelieu", "Niagara",
                 "Chilliwack", "Victoria", "Brossard", "Newmarket", "Repentigny", "Peterborough",
                 "Moncton", "Drummondville", "Caledon", "Airdrie", "Sarnia", "Granby", "Fredericton",
                 "Aurora", "Mirabel", "Blainville", "Welland", "Belleville"};
@@ -42,13 +42,14 @@ public class config {
             "oshawa", "sherbrooke", "sudbury", "abbotsford", "coquitlam", "barrie", "saguenay",
             "kelowna", "guelph", "whitby", "cambridge", "catharines", "milton", "langley", "kingston",
             "ajax", "waterloo", "terrebonne", "Saanich", "delta", "brantford", "clarington", "nanaimo",
-            "strathcona", "pickering", "lethbridge", "kamloops", "richelieu", "niagara", "cape Breton",
+            "strathcona", "pickering", "lethbridge", "kamloops", "richelieu", "niagara",
             "chilliwack", "victoria", "brossard", "newmarket", "repentigny", "peterborough",
             "moncton", "drummondville", "caledon", "airdrie", "sarnia", "granby", "fredericton",
             "aurora", "mirabel", "blainville", "welland", "belleville");
 
     public static final String cityRegex = "^[a-zA-Z]+$";
     public static final String linkRegex = "(https?://[a-zA-Z0-9./-]+)";
-    public static final int minCityLength = 15;
+    public static final int maxCityLength = 15;
+    public static final int minCityLength = 4;
 
 }
