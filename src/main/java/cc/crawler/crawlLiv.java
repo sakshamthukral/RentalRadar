@@ -49,8 +49,13 @@ public class crawlLiv {
             case "Toronto", "toronto" ->  driver.get("https://liv.rent/rental-listings/city/toronto");
             case "Windsor", "windsor" -> driver.get("https://liv.rent/rental-listings/city/windsor-on");
             case "Winnipeg", "winnipeg" -> driver.get("https://liv.rent/rental-listings/city/winnipeg");
+            case "Vancouver", "vancouver" -> driver.get("https://liv.rent/rental-listings/city/vancouver");
+            case "Calgary", "calgary" -> driver.get("https://liv.rent/rental-listings/city/calgary");
+            case "Ottawa", "ottawa" -> driver.get("https://liv.rent/rental-listings/city/ottawa");
+            case "Edmonton", "edmonton" -> driver.get("https://liv.rent/rental-listings/city/edmonton");
+            case "Brampton", "brampton" -> driver.get("https://liv.rent/rental-listings/city/brampton");
+            case "Hamilton", "hamilton" -> driver.get("https://liv.rent/rental-listings/city/hamilton");
         }
-
 
         int page=1;
         while(page<=numPages){
