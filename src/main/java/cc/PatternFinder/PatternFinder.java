@@ -11,9 +11,8 @@ public class PatternFinder {
     public static final List<String> EMAIL_REGEX = List.of("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b");
     public static final List<String> PHONE_REGEX = List.of("\\d{3}-\\d{7}", "\\(\\d{3}\\)\\s\\d{3}-\\d{4}", "\\+1\\s\\(\\d{3}\\)\\s\\d{3}-\\d{4}", "\\+1\\s\\(\\d{3}\\)\\s\\d{3}-\\d{4}");
     public static final List<String> CURRENCY_REGEX = List.of("\\$[0-9,]+(?:\\.[0-9]{2})?");
-    public static final List<String> URL_REGEX = List.of("https?://\\S+");
-    public static final List<String> DATE_REGEX = List.of("\\d{1,2}/\\d{1,2}/\\d{2,4}", "\\d{1,2}-\\d{1,2}-\\d{2,4}", "\\d{4}/\\d{1,2}/\\d{1,2}", "\\d{4}-\\d{1,2}-\\d{1,2}", "\\d{4}-\\d{2}-\\d{2}", "\\d{1,2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\\d{4}");
-
+    public static final List<String> DATE_REGEX = List.of("\\d{4}/\\d{1,2}/\\d{1,2}", "\\d{4}-\\d{1,2}-\\d{1,2}", "\\d{4}-\\d{2}-\\d{2}", "\\d{1,2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\\d{4}");
+    public static final String URL_REGEX = "<<<(https?://\\S+)>>>";
 
     private static List<MatchResult> findInFiles(List<String> filenames, List<String> regexPattern) {
 
@@ -56,9 +55,7 @@ public class PatternFinder {
     private static String findListingUrl(String line) {
         String url = "";
 
-        String regex = "<<<(https?://\\S+)>>>";
-
-        Pattern pattern = Pattern.compile(regex);
+        Pattern pattern = Pattern.compile(URL_REGEX);
         Matcher urlMatcher = pattern.matcher(line);
 
         while (urlMatcher.find()) {
@@ -86,31 +83,17 @@ public class PatternFinder {
         return listingUrl;
     }
 
-    private static void displayPatterns(List<MatchResult> matchResults) {
+    private static void displayPatternInFile(MatchResult matchResult) {
 
-        boolean noMatchesFound = true;
-
-        for (MatchResult response : matchResults) {
-            if (!response.results.isEmpty()) {
-                noMatchesFound = false;
-                System.out.println(response.filename + ":");
-
-                if (response.listingUrl.isEmpty()) {
-                    System.out.println("\t( Listing URL: " + " <Not found> )");
-                } else {
-                    System.out.println("\t( Listing URL: " + response.listingUrl + " )");
-                }
-
-                int serialNumber = 1;
-                for (String result : response.results) {
-                    System.out.println("\t" + serialNumber + ". " + result);
-                    serialNumber++;
-                }
-            }
+        if (matchResult.results.isEmpty()) {
+            System.out.println("\tNo matches found");
+            return;
         }
 
-        if (noMatchesFound) {
-            System.out.println("No matches found");
+        int serialNumber = 1;
+        for (String result : matchResult.results) {
+            System.out.println("\t" + serialNumber + ". " + result);
+            serialNumber++;
         }
     }
 
@@ -130,14 +113,58 @@ public class PatternFinder {
         displayListingPrices(listingPrices);
     }
 
+    public static void findContactDetails(List<String> filenames) {
+        boolean noMatchesFound = true;
+        for (String filename : filenames) {
+            String parsedFilePath = filename.replace("description", "parsed");
+            MatchResult emailMatches = findInFile(parsedFilePath, EMAIL_REGEX);
+            MatchResult phoneMatches = findInFile(parsedFilePath, PHONE_REGEX);
+
+            if (!emailMatches.results.isEmpty() || !phoneMatches.results.isEmpty()) {
+                noMatchesFound = false;
+                System.out.println(filename + " | " + findListingUrlInFile(filename));
+
+                System.out.println("\tPHONE NUMBERS:");;
+                displayPatternInFile(phoneMatches);
+                System.out.println("\tEMAILS:");
+                displayPatternInFile(emailMatches);
+            }
+
+        }
+
+        if (noMatchesFound) {
+            System.out.println("No matches found");
+        }
+    }
+
+    public static void findDates (List<String> filenames) {
+        boolean noMatchesFound = true;
+        for (String filename : filenames) {
+            String parsedFilePath = filename.replace("description", "parsed");
+            MatchResult dateMatches = findInFile(parsedFilePath, DATE_REGEX);
+
+            if (!dateMatches.results.isEmpty()) {
+                noMatchesFound = false;
+                System.out.println(filename + " | " + findListingUrlInFile(filename));
+
+                System.out.println("\tDATES:");
+                displayPatternInFile(dateMatches);
+                System.out.println();
+            }
+
+        }
+
+        if (noMatchesFound) {
+            System.out.println("No matches found");
+        }
+    }
+
     public static void run(List<String> filenames) {
         System.out.println("\nFind patterns in the ranked pages:");
         boolean sessionFlag = true;
         int menuUserInput;
         while (sessionFlag) {
             menuUserInput = menuTakeUserInput();
-
-            List<MatchResult> matchResults = new ArrayList<>();
 
             System.out.println();
 
@@ -147,26 +174,16 @@ public class PatternFinder {
                     findCurrencyAmounts(filenames);
                 }
                 case 2 -> {
-                    System.out.println("Finding Phone numbers...");
-                    matchResults = findInFiles(filenames, PHONE_REGEX);
+                    System.out.println("Finding Contact Details...");
+                    findContactDetails(filenames);
                 }
                 case 3 -> {
-                    System.out.println("Finding Emails...");
-                    matchResults = findInFiles(filenames, EMAIL_REGEX);
-                }
-                case 4 -> {
-                    System.out.println("Finding URLs...");
-                    matchResults = findInFiles(filenames, URL_REGEX);
-                }
-                case 5 -> {
                     System.out.println("Finding Dates...");
-                    matchResults = findInFiles(filenames, DATE_REGEX);
+                    findDates(filenames);
                 }
                 default -> sessionFlag = false;
             }
 
-            if (sessionFlag)
-                displayPatterns(matchResults);
         }
 
     }
@@ -175,15 +192,13 @@ public class PatternFinder {
         System.out.println();
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter 1 : To find Listing Prices");
-        System.out.println("Enter 2 : To find Phone Numbers");
-        System.out.println("Enter 3 : To find Emails");
-        System.out.println("Enter 4 : To find URLs");
-        System.out.println("Enter 5 : To find Dates");
-        System.out.println("Enter 6 : To Return to previous menu");
+        System.out.println("Enter 2 : To find Contact Details");
+        System.out.println("Enter 3 : To find Dates");
+        System.out.println("Enter 4 : To Return to previous menu");
 
         String input = sc.next();
 
-        while (!input.matches("[1-6]")) {
+        while (!input.matches("[1-4]")) {
             System.out.println("Please enter a valid input");
             input = sc.next();
         }
@@ -259,10 +274,5 @@ public class PatternFinder {
         return Integer.parseInt(cleanedAmount);
     }
 
-    public static void main(String[] args) {
-//        List<String> filenames = List.of("DB/description_rental.ca/toronto/page_3_listing_1.txt", "DB/description_rental.ca/toronto/page_1_listing_17.txt", "DB/description_rental.ca/toronto/page_1_listing_16.txt", "DB/description_rental.ca/toronto/page_3_listing_2.txt");
-        List<String> filenames = List.of("DB/crawled_rental.ca/toronto/page_1_listing_1.html");
-
-        run(filenames);
-    }
 }
+
