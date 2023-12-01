@@ -64,7 +64,7 @@ sudbury 1
 surrey 1
 terrebonne 2
 toronto 42
-vancouver 5
+vancouver 6
 vaughan 1
 victoria 3
 waterloo 1

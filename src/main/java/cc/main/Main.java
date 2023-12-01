@@ -193,6 +193,12 @@ public class Main {
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
         System.out.println("Real Estate Rental Analysis Project : ACC");
+        System.out.println("Project Intro:");
+        System.out.println("One-stop platform that gathers rental listings from top real estate websites. ");
+        System.out.println("By bringing together data from liv.rent, rentals.ca, and rentseeker.ca, we've made a central place where people can easily find and refine their rental searches.");
+        System.out.println("With features like searching the web for leads, ranking the leads based on user’s search query ,searching for contact details from those leads.");
+        System.out.println("Our platform helps users to view and analyze correct rental listings and make informed decision.");
+        System.out.println("=========================================================================================================================================");
         while (true){
             int webOption = 0;
 
